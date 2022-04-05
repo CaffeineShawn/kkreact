@@ -9,8 +9,10 @@ import UploadFile from './pages/UploadFile'
 
 function App () {
   return (
-    <div className="App">
-      <div className='flex-col z-3 sticky text-blue-600 text-xl py-4 font-bold'>BlankSpace</div>
+    <div className="App w-screen min-h-screen tailwind-bg">
+      <div className='h-12 w-screen flex items-center fixed top-0 left-0 z-80'>
+        <Link to='/'  className='text-white text-xl font-bold flex-1 text-center'>BlankSpace</Link>
+        </div>
       <Routes>
         <Route path='/' element={<Home />}></Route>
         <Route path='/login' element={<Login />}></Route>

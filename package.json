@@ -16,6 +16,7 @@
     "apollo": "2.33.4",
     "apollo-codegen-core": "0.40.3",
     "apollo-language-server": "1.26.3",
+    "axios": "^0.26.1",
     "postcss-import": "^14.1.0",
     "postcss-nested": "^5.0.6",
     "react": "^17.0.2",

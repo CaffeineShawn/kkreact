@@ -14,3 +14,64 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.content-area {
+  min-height: calc(100vh - 48px);
+}
+
+.tailwind-bg { 
+  background-color: #9921e8;
+  background-image: linear-gradient(315deg, #9921e8 0%, #5f72be 74%);
+}
+
+/* .login-form {
+  padding: 4rem;
+  background: #fff;
+} */
+
+@layer utilities {
+  .glass {
+    @apply bg-gray-100 bg-opacity-60;
+
+    backdrop-filter: blur(20px) saturate(160%) contrast(45%) brightness(140%);
+  }
+
+  .hover-scale-95 {
+    transform: scale(0.95)
+  }
+
+  .hover-scale-105 {
+    transform: scale(1.05)
+  }
+
+  .hover-scale-150 {
+    transform: scale(1.5)
+  }
+
+  .mask {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    height: 100vh;
+  }
+
+  .mask-gray {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .calendar-border {
+    border-bottom-right-radius: 30px;
+    border-bottom-left-radius: 30px;
+  }
+
+  .middle-screen {
+    position: relative;
+    top: 30%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0;
+  }
+}
+

@@ -73,7 +73,7 @@ const Posts = () => {
   if (!data) return <div>Not Found</div>
 
   return (
-    <div className='flex-col'>
+    <div className='flex-col content-area'>
       <div className='px-3 font-sans text-left'>
         {data.postsWithRelay.edges.map(({ node }: PostsWithRelayTypes.PostsWithRelay_postsWithRelay_edges) => (
           <div key={node?.id} className='mb-3 bg-gray-200 p-3 rounded-lg'>
