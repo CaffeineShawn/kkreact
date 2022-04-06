@@ -3,12 +3,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
 import App from './App'
-import Posts from './pages/Posts'
-import {
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider
-} from '@apollo/client'
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'
 import { BrowserRouter } from 'react-router-dom'
 
 export const client = new ApolloClient({
@@ -17,10 +12,10 @@ export const client = new ApolloClient({
 })
 
 ReactDOM.render(
-    <ApolloProvider client={client}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </ApolloProvider>
-    , document.getElementById('root')
+  <ApolloProvider client={client}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </ApolloProvider>,
+  document.getElementById('root')
 )
