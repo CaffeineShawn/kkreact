@@ -1,11 +1,25 @@
 import React from 'react'
 import './App.css'
 import 'antd/dist/antd.less'
-import { Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route, Link, useLocation, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Posts from './pages/Posts'
 import UploadFile from './pages/UploadFile'
+
+interface GuardProps {
+  token: string
+  routeRedirect: string
+}
+
+function Guard({ token, routeRedirect }: GuardProps) {
+  useLocation()
+  return localStorage.getItem(token) ? (
+    <UploadFile />
+  ) : (
+    <Navigate to={routeRedirect} replace={true} />
+  )
+}
 
 function App() {
   return (
@@ -22,7 +36,10 @@ function App() {
         <Route path="/" element={<Home />}></Route>
         <Route path="/login" element={<Login />}></Route>
         <Route path="/posts" element={<Posts />}></Route>
-        <Route path="/upload" element={<UploadFile />}></Route>
+        <Route
+          path="/upload"
+          element={<Guard token="token" routeRedirect="/login" />}
+        />
       </Routes>
     </div>
   )

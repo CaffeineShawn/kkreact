@@ -4,26 +4,34 @@ import React from 'react'
 
 const { Dragger } = Upload
 
-const uploadExcel = async (options) => {
-  const { onSuccess, onError, file, onProgress } = options
+const uploadExcel = async (options: {
+  onSuccess: any
+  onError: any
+  file: any
+}) => {
+  const { onSuccess, onError, file } = options
   const formData = new FormData()
   formData.append('file', file)
-  try {
-    const response = await fetch('https://localhost:8964/excel/upload', {
-      method: 'POST',
-      body: formData,
-      mode: 'cors',
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('token')
-      }
+
+  const response = await fetch('https://api.szlikeyou.com:8964/excel/upload', {
+    method: 'POST',
+    body: formData,
+    mode: 'cors',
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('token')
+    }
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      onSuccess('上传成功')
+      console.log(data)
     })
-    onSuccess('ok')
-    console.log('res: ', response)
-  } catch (err) {
-    console.log('err:', err)
-    const error = new Error('上传失败')
-    onError({ error })
-  }
+    .catch((err) => {
+      onError('上传失败')
+      console.log(err)
+    })
+
+  return response
 }
 
 const draggerProps = {
