@@ -1,27 +1,31 @@
 import { Upload, message } from 'antd'
 import { InboxOutlined } from '@ant-design/icons'
 import React from 'react'
+import axios from 'axios'
+import * as events from 'events'
 
 const { Dragger } = Upload
 
-const uploadExcel = async (options: {
-  onSuccess: any
-  onError: any
-  file: any
-}) => {
-  const { onSuccess, onError, file } = options
+const uploadExcelHandler = async (options: any) => {
+  const { onSuccess, onError, file, onProgress } = options
   const formData = new FormData()
-  formData.append('file', file)
-
-  const response = await fetch('https://api.szlikeyou.com:8964/excel/upload', {
-    method: 'POST',
-    body: formData,
-    mode: 'cors',
+  const uploadUrl = 'https://api.szlikeyou.com:8964/excel/upload'
+  const testUrl = 'https://localhost:8080/upload/file'
+  const config = {
     headers: {
       Authorization: 'Bearer ' + localStorage.getItem('token')
+    },
+    mode: 'cors',
+    onUploadProgress: ({ total, loaded }: any) => {
+      onProgress(
+        { percent: Math.round((loaded / total) * 100).toFixed(2) },
+        file
+      )
     }
-  })
-    .then((res) => res.json())
+  }
+  formData.append('file', file)
+  axios
+    .post(uploadUrl, formData, config)
     .then((data) => {
       onSuccess('上传成功')
       console.log(data)
@@ -30,15 +34,14 @@ const uploadExcel = async (options: {
       onError('上传失败')
       console.log(err)
     })
-
-  return response
 }
 
 const draggerProps = {
   name: 'file',
   multiple: false,
-  onChange(info: { file: { name?: any; status?: any }; fileList: any }) {
+  onChange(info: any) {
     const { status } = info.file
+    const event = info.event
     if (status !== 'uploading') {
       console.log(info.file, info.fileList)
     }
@@ -50,6 +53,15 @@ const draggerProps = {
   },
   onDrop(e: { dataTransfer: { files: any } }) {
     console.log('Dropped files', e.dataTransfer.files)
+  },
+  onSuccess(res: any, file: any) {
+    console.log('onSuccess', res, file)
+  },
+  onError(err: any) {
+    console.log('onError', err)
+  },
+  onProgress({ percent }: any, file: any) {
+    console.log('onProgress', `${percent}%`, file.name)
   }
 }
 
@@ -57,7 +69,7 @@ const UploadFile = () => {
   return (
     <div className="flex flex-col h-screen items-center justify-center">
       <div className="flex-initial px-2 md:px-0">
-        <Dragger {...draggerProps} customRequest={uploadExcel}>
+        <Dragger {...draggerProps} customRequest={uploadExcelHandler}>
           <p className="ant-upload-drag-icon">
             <InboxOutlined />
           </p>

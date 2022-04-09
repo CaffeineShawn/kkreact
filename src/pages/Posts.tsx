@@ -80,7 +80,7 @@ const Posts = () => {
 
   return (
     <div className="flex-col content-area">
-      <div className="pt-16 px-3 font-sans text-left mx-auto w-80 md:w-96 lg:w-112">
+      <div className="pt-16 pb-4 px-3 font-sans text-left mx-auto w-80 md:w-5/12">
         {data.postsWithRelay.edges.map(
           ({
             node
@@ -120,17 +120,13 @@ const Posts = () => {
               )}
               <div>votes: {node?.votes.totalCount}</div>
               <div>reports: {node?.reports.totalCount}</div>
-              <Button
-                size="middle"
-                shape="default"
-                fill="outline"
-                color="danger"
-                className="w-full bg-white"
-                disabled={node?.delete != null}
-                onClick={() => console.log(node?.id)}
+              <button
+                className={
+                  'bg-red-500 text-white w-full font-bold py-2 rounded-md mt-2'
+                }
               >
                 Delete
-              </Button>
+              </button>
             </div>
           )
         )}

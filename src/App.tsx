@@ -6,6 +6,7 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import Posts from './pages/Posts'
 import UploadFile from './pages/UploadFile'
+import InfinityScroll from './components/InfinityScroll'
 
 interface GuardProps {
   token: string
@@ -35,11 +36,15 @@ function App() {
   return (
     <div className="App w-screen min-h-screen tailwind-bg">
       <div
-        className={`h-12 w-screen flex items-center fixed top-0 left-0 z-80 transition duration-300 ${glassNavigator ? 'glass' : ''}`}
+        className={`h-12 w-screen flex items-center fixed top-0 left-0 z-2 transition duration-300 ${
+          glassNavigator ? 'glass' : ''
+        }`}
       >
         <Link
           to="/"
-          className={`text-xl font-bold flex-1 text-center transition-colors duration-300 ${glassNavigator ? 'text-blue-300' : 'text-white'}`}
+          className={`text-xl font-bold flex-1 text-center transition-colors duration-300 ${
+            glassNavigator ? 'text-blue-300' : 'text-white'
+          }`}
         >
           BlankSpace
         </Link>
@@ -52,6 +57,7 @@ function App() {
           path="/upload"
           element={<Guard token="token" routeRedirect="/login" />}
         />
+        <Route path="/infinityScroll" element={<InfinityScroll />}></Route>
       </Routes>
     </div>
   )
