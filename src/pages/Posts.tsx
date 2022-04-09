@@ -80,7 +80,7 @@ const Posts = () => {
 
   return (
     <div className="flex-col content-area">
-      <div className="px-3 font-sans text-left">
+      <div className="pt-16 px-3 font-sans text-left mx-auto w-80 md:w-96 lg:w-112">
         {data.postsWithRelay.edges.map(
           ({
             node
