@@ -22,7 +22,9 @@ export default ({ mode }) => {
       https: {
         key: fs.readFileSync(process.env.VITE_HTTPS_KEY_PATH),
         cert: fs.readFileSync(process.env.VITE_HTTPS_CER_PATH)
-      }
+      },
+      host: '0.0.0.0',
+      port: 4396
     },
     plugins: [viteReact()]
   })

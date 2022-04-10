@@ -1,15 +1,14 @@
-import { Upload, message } from 'antd'
 import { InboxOutlined } from '@ant-design/icons'
-import React from 'react'
-import axios from 'axios'
+import { message, Upload } from 'antd'
 import { Dialog } from 'antd-mobile'
+import axios from 'axios'
+import React from 'react'
 
-const uploadUrl = 'https://api.szlikeyou.com:8964/excel/upload'
-const testUrl = 'https://localhost:8080/upload/file'
+const uploadUrl = import.meta.env.VITE_UPLOAD_URL
 
 const uploadProps = {
   multiple: false,
-  action: testUrl,
+  action: uploadUrl,
   accept: '.xlsx',
   maxCount: 1,
   headers: {
