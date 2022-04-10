@@ -31,7 +31,7 @@ const Login = () => {
                 User-ID
               </div>
               <input
-                className="text-lg bg-gray-200 text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-purple-600 transition duration-500"
+                className="login-form text-lg bg-gray-200 text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-purple-600 transition duration-500"
                 name="userId"
                 type="text"
                 required
@@ -43,7 +43,7 @@ const Login = () => {
                 Password
               </div>
               <input
-                className="text-lg bg-gray-200 text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-purple-600 transition duration-500"
+                className="login-form text-lg bg-gray-200 text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-purple-600 transition duration-500"
                 name="sign"
                 type="password"
                 required
