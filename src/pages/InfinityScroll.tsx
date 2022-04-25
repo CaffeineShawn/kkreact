@@ -108,7 +108,7 @@ export default function InfinityScroll() {
                 {node?.images?.map((image: string, idx: number) => (
                   <Image
                     className="rounded-md my-1.5"
-                    src={image}
+                    src={image + '?imageMogr2/format/webp'}
                     key={image}
                     onClick={() => {
                       ImageViewer.Multi.show({
