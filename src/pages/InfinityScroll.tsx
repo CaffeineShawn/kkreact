@@ -99,7 +99,7 @@ export default function InfinityScroll() {
             ({
               node
             }: PostsWithRelayTypes.PostsWithRelay_postsWithRelay_edges) => (
-              <div key={node?.id} className="mb-3 bg-gray-200 p-3 rounded-lg">
+              <div key={node?.id} className={`mb-3 ${node?.creator?.unionId && node.creator.openId ? 'bg-pink-100' : 'bg-gray-200'} p-3 rounded-lg`}>
                 <div>{node?.createdAt}</div>
                 <div>
                   {node?.creator?.name ?? 'Anonymous'}: {node?.content}

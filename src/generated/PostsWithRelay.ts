@@ -21,6 +21,14 @@ export interface PostsWithRelay_postsWithRelay_edges_node_creator {
    * 用户昵称
    */
   name: string;
+  /**
+   * 微信openId,注册时传入微信code自动通过微信提供的接口获取获取
+   */
+  openId: string;
+  /**
+   * 微信unionId,注册时传入微信code自动通过微信提供的接口获取获取
+   */
+  unionId: string;
 }
 
 export interface PostsWithRelay_postsWithRelay_edges_node_subject {

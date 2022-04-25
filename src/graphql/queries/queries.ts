@@ -55,6 +55,8 @@ const POSTS_WITH_RELAY = gql`
                         id
                         userId
                         name
+                        openId
+                        unionId
                     }
                     subject {
                         id
