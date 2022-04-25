@@ -4,18 +4,23 @@ import {
   Dialog,
   Image,
   ImageViewer,
-  InfiniteScroll,
-  Toast
+  InfiniteScroll
 } from 'antd-mobile'
-import { POSTS_WITH_RELAY } from '../pages/Posts'
+import { POSTS_WITH_RELAY } from '../graphql/queries/queries'
+import { DELETE_POST } from '../graphql/mutations/delete'
 import {
   PostsWithRelay,
   PostsWithRelayVariables,
   PostsWithRelay_postsWithRelay_edges
 } from '../generated/PostsWithRelay'
-import { client } from '../main'
+import {
+  DeletePost,
+  DeletePostVariables
+} from '../generated/DeletePost'
+import { client, clientWithToken } from '../main'
 import * as PostsWithRelayTypes from '../generated/PostsWithRelay'
 import { Action } from 'antd-mobile/es/components/action-sheet'
+import { message } from 'antd'
 
 export default function InfinityScroll() {
   const [postsData, setPostsData] = useState<
@@ -32,12 +37,24 @@ export default function InfinityScroll() {
       description: '删除后数据不可恢复',
       danger: true,
       onClick: async () => {
-        const res = await Dialog.confirm({ content: '确认删除？' })
-
-        if (res) {
-          setPostsData(deletePost(postsData!, deletePostRef.current!))
-          Toast.show('已删除id为' + deletePostRef.current + '的帖子')
-        }
+        await Dialog.confirm({ content: '确认删除？' })
+          .then(async () => {
+            const res = await clientWithToken.mutate<DeletePost, DeletePostVariables>({
+              mutation: DELETE_POST,
+              variables: {
+                postId: deletePostRef.current!
+              },
+              fetchPolicy: 'network-only'
+            })
+            if (res.data?.deletePost.createdAt) {
+              deletePost(postsData!, deletePostRef.current!)
+              message.success('已删除id为' + deletePostRef.current + '的帖子')
+              console.log('已于' + res.data?.deletePost.createdAt + '删除id为' + deletePostRef.current + '的帖子')
+            }
+          })
+          .catch(() => {
+            message.info('已取消删除id为' + deletePostRef.current + '的帖子')
+          })
       }
     }
   ]

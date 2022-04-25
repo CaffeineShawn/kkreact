@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "gen": "yarn run apollo client:codegen --target typescript --endpoint=https://api.szlikeyou.com/graphql --outputFlat --includes \"./src/**/*.{ts,tsx}\" --excludes \"src/generated\" src/generated",
+    "gen": "yarn run apollo client:codegen --target typescript --endpoint=https://api.szlikeyou.com/graphql --outputFlat --includes \"./src/graphql/**/*.{ts,tsx}\" --excludes \"src/generated\" src/generated",
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
@@ -14,7 +14,7 @@
     "@apollo/client": "^3.5.10",
     "antd": "^4.19.5",
     "antd-mobile": "^5.9.5",
-    "apollo": "2.33.4",
+    "apollo": "2.33.10",
     "apollo-codegen-core": "0.40.3",
     "apollo-language-server": "1.26.3",
     "axios": "^0.26.1",

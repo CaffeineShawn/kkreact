@@ -24,7 +24,7 @@ export interface CommentFields_creator {
   /**
    * 用户头像链接
    */
-  avatarImageUrl: string;
+  avatarImageUrl: string | null;
 }
 
 export interface CommentFields_anonymous_creator {
@@ -41,6 +41,9 @@ export interface CommentFields_anonymous {
    * 匿名的创建者，只有创建者自己可见
    */
   creator: CommentFields_anonymous_creator | null;
+  /**
+   * 同一个用户的匿名信息在同一条帖子下面的 watermark 相同
+   */
   watermark: string;
 }
 
@@ -68,7 +71,7 @@ export interface CommentFields_trendingComments_nodes_creator {
   /**
    * 用户头像链接
    */
-  avatarImageUrl: string;
+  avatarImageUrl: string | null;
 }
 
 export interface CommentFields_trendingComments_nodes {

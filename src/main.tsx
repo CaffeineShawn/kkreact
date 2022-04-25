@@ -8,7 +8,18 @@ import { BrowserRouter } from 'react-router-dom'
 
 export const client = new ApolloClient({
   uri: 'https://api.szlikeyou.com/graphql',
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
+  headers: {
+    // authorization: `Bearer ${localStorage.getItem('token')}`
+  }
+})
+
+export const clientWithToken = new ApolloClient({
+  uri: 'https://api.szlikeyou.com/graphql',
+  cache: new InMemoryCache(),
+  headers: {
+    authorization: `Bearer ${localStorage.getItem('token')}`
+  }
 })
 
 ReactDOM.render(

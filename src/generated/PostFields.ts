@@ -24,7 +24,7 @@ export interface PostFields_creator {
   /**
    * 用户头像链接
    */
-  avatarImageUrl: string;
+  avatarImageUrl: string | null;
 }
 
 export interface PostFields_subject {
@@ -59,7 +59,7 @@ export interface PostFields_trendingComments_nodes_creator {
   /**
    * 用户头像链接
    */
-  avatarImageUrl: string;
+  avatarImageUrl: string | null;
 }
 
 export interface PostFields_trendingComments_nodes_anonymous_creator {
@@ -76,6 +76,9 @@ export interface PostFields_trendingComments_nodes_anonymous {
    * 匿名的创建者，只有创建者自己可见
    */
   creator: PostFields_trendingComments_nodes_anonymous_creator | null;
+  /**
+   * 同一个用户的匿名信息在同一条帖子下面的 watermark 相同
+   */
   watermark: string;
 }
 

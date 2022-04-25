@@ -4,22 +4,21 @@ import 'antd/dist/antd.less'
 import { Routes, Route, Link, useLocation, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
-import Posts from './pages/Posts'
 import UploadFile from './pages/UploadFile'
-import InfinityScroll from './components/InfinityScroll'
+import InfinityScroll from './pages/InfinityScroll'
 
 interface GuardProps {
-  token: string
   routeRedirect: string
+  destination: typeof Login
 }
 
-function Guard({ token, routeRedirect }: GuardProps) {
+function Guard({ routeRedirect, destination }: GuardProps) {
   useLocation()
-  return localStorage.getItem(token) ? (
-    <UploadFile />
+  return <> {localStorage.getItem('token') ? (
+    destination()
   ) : (
     <Navigate to={routeRedirect} replace={true} />
-  )
+  )}</>
 }
 
 function App() {
@@ -52,12 +51,14 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />}></Route>
         <Route path="/login" element={<Login />}></Route>
-        <Route path="/posts" element={<Posts />}></Route>
         <Route
           path="/upload"
-          element={<Guard token="token" routeRedirect="/login" />}
+          element={<Guard routeRedirect="/login" destination={UploadFile} />}
         />
-        <Route path="/infinityScroll" element={<InfinityScroll />}></Route>
+        <Route
+          path="/infinityScroll"
+          element={<Guard routeRedirect="/login" destination={InfinityScroll} />}
+        />
       </Routes>
     </div>
   )

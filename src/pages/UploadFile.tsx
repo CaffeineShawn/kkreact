@@ -17,7 +17,7 @@ const uploadProps = {
   onStart(file: { name: any }) {
     console.log('onStart', file, file.name)
   },
-  beforeUpload(file: { name: any }, fileList: any) {
+  beforeUpload(file: { name: any }) {
     return new Promise<void>((resolve, reject) => {
       Dialog.confirm({
         content: '确定上传' + file.name + '?',
@@ -50,12 +50,14 @@ const uploadProps = {
           )
         }
       })
-      .then(({ data: response }) => {
-        onSuccess(response, file)
+      .then(res => {
+        onSuccess(res, file)
+        console.log(res.data)
         message.success('上传成功')
       })
-      .catch((err) => {
+      .catch(err => {
         onError(err, file)
+        console.log(err)
       })
 
     return {

@@ -2,7 +2,8 @@ module.exports = {
   client: {
     service: {
       name: 'apollo',
-      url: import.meta.env.VITE_UPLOAD_URL
+      url: 'https://api.szlikeyou.com/graphql'
+      // url: 'https://dev.szlikeyou.com/graphql'
     }
   }
 }

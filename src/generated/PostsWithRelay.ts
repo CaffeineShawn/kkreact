@@ -77,6 +77,9 @@ export interface PostsWithRelay_postsWithRelay_edges_node_anonymous_creator {
 export interface PostsWithRelay_postsWithRelay_edges_node_anonymous {
   __typename: "Anonymous";
   id: string;
+  /**
+   * 同一个用户的匿名信息在同一条帖子下面的 watermark 相同
+   */
   watermark: string;
   /**
    * 匿名的创建者，只有创建者自己可见

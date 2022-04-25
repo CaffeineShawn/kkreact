@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { client } from '../main'
 import { LOGIN } from '../graphql/mutations/login'
 import { Flipped } from 'react-flip-toolkit'
+import { message } from 'antd'
 
 const Login = () => {
   const [userId, setUserId] = useState('')
@@ -53,7 +54,6 @@ const Login = () => {
             <button
               onClick={(event) => {
                 event.preventDefault()
-                console.log({ userId, sign })
                 client
                   .mutate({
                     mutation: LOGIN,
@@ -62,12 +62,17 @@ const Login = () => {
                       sign: sign
                     }
                   })
-                  .then((res) => {
-                    console.log(res)
+                  .then(res => {
+                    console.log(res.data)
                     localStorage.setItem('token', res.data.login.token)
+                    console.log(localStorage.getItem('token'))
+                    message.success('Login successfully')
                     nav('/')
                   })
-                  .catch((err) => console.log(err))
+                  .catch(err => {
+                    console.log(err)
+                    message.error('Wrong user-id or password')
+                  })
               }}
               className="mt-8 rounded-md uppercase py-2 w-full bg-purple-500 text-white text-md font-bold"
             >
