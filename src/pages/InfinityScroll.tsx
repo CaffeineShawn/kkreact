@@ -47,7 +47,7 @@ export default function InfinityScroll() {
               fetchPolicy: 'network-only'
             })
             if (res.data?.deletePost.createdAt) {
-              deletePost(postsData!, deletePostRef.current!)
+              setPostsData(postsData => deletePost(postsData!, deletePostRef.current!))
               message.success('已删除id为' + deletePostRef.current + '的帖子')
               console.log('已于' + res.data?.deletePost.createdAt + '删除id为' + deletePostRef.current + '的帖子')
             }
