@@ -1,8 +1,8 @@
 import { InboxOutlined } from '@ant-design/icons'
 import { message, Upload } from 'antd'
 import { Dialog } from 'antd-mobile'
-import axios from 'axios'
 import React from 'react'
+import Request from '../utils/request'
 
 const uploadUrl = import.meta.env.VITE_UPLOAD_URL
 
@@ -11,9 +11,6 @@ const uploadProps = {
   action: uploadUrl,
   accept: '.xlsx',
   maxCount: 1,
-  headers: {
-    Authorization: 'Bearer ' + localStorage.getItem('token')
-  },
   onStart(file: { name: any }) {
     console.log('onStart', file, file.name)
   },
@@ -37,7 +34,22 @@ const uploadProps = {
       formData.append('file', file)
     }
     console.log(options)
-    axios
+    const upload = new Request({
+      method: 'post',
+      url: action,
+      data: formData,
+      timeout: 1000 * 60 * 5,
+      interceptors: {
+        requestInterceptors: config => {
+          config.headers = {
+            ...headers,
+            Authorization: 'Bearer ' + window.localStorage.getItem('token')
+          }
+          return config
+        }
+      }
+    })
+    upload.instance
       .post(action, formData, {
         headers: headers,
         onUploadProgress: ({ total, loaded }) => {
