@@ -29,6 +29,10 @@ export interface PostsWithRelay_postsWithRelay_edges_node_creator {
    * 微信unionId,注册时传入微信code自动通过微信提供的接口获取获取
    */
   unionId: string;
+  /**
+   * 用户头像链接
+   */
+  avatarImageUrl: string | null;
 }
 
 export interface PostsWithRelay_postsWithRelay_edges_node_subject {
@@ -95,6 +99,11 @@ export interface PostsWithRelay_postsWithRelay_edges_node_anonymous {
   creator: PostsWithRelay_postsWithRelay_edges_node_anonymous_creator | null;
 }
 
+export interface PostsWithRelay_postsWithRelay_edges_node_commentsWithRelay {
+  __typename: "CommentsConnectionWithRelay";
+  totalCount: number;
+}
+
 export interface PostsWithRelay_postsWithRelay_edges_node {
   __typename: "Post";
   id: string;
@@ -125,6 +134,10 @@ export interface PostsWithRelay_postsWithRelay_edges_node {
    * 帖子的匿名信息，非匿名帖子此项为空
    */
   anonymous: PostsWithRelay_postsWithRelay_edges_node_anonymous | null;
+  /**
+   * 获取所有评论 relay分页版
+   */
+  commentsWithRelay: PostsWithRelay_postsWithRelay_edges_node_commentsWithRelay;
 }
 
 export interface PostsWithRelay_postsWithRelay_edges {

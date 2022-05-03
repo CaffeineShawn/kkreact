@@ -57,6 +57,7 @@ const POSTS_WITH_RELAY = gql`
                         name
                         openId
                         unionId
+                        avatarImageUrl
                     }
                     subject {
                         id
@@ -87,6 +88,9 @@ const POSTS_WITH_RELAY = gql`
                             userId
                             name
                         }
+                    }
+                    commentsWithRelay {
+                        totalCount
                     }
                 }
                 cursor
