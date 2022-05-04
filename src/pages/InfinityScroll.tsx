@@ -174,7 +174,7 @@ export default function InfinityScroll() {
                     fontSize: 64,
                     color: 'var(--adm-color-success)'
                   }} />),
-                  content: res.data.toString()
+                  content: `成功点赞${res.data.successCount}次`
                 }).then(() => setVoteCount(0)).catch(err => console.log(err))
               })
           }
