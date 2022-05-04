@@ -1,5 +1,5 @@
-import { CommentOutlined, HeartOutlined, WarningOutlined } from '@ant-design/icons'
-import { message } from 'antd'
+import { CommentOutlined, HeartOutlined, ReloadOutlined, WarningOutlined } from '@ant-design/icons'
+import { BackTop, message } from 'antd'
 import {
   ActionSheet,
   Dialog,
@@ -29,6 +29,7 @@ export default function InfinityScroll() {
     PostsWithRelay_postsWithRelay_edges[] | null
   >(null)
   const [hasMore, setHasMore] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [startCursor, setStartCursor] = useState<string | null>(null)
   const [actionSheetVisible, setActionSheetVisible] = useState(false)
   const deletePostRef = useRef<string | null>(null)
@@ -93,15 +94,53 @@ export default function InfinityScroll() {
       })
   }
 
+  async function fetchMore() {
+    if (loading) {
+      message.info('正在获取新帖子中，请稍后再试!')
+      return
+    }
+    setLoading(true)
+    await client.query<PostsWithRelay, PostsWithRelayVariables>({
+      query: POSTS_WITH_RELAY,
+      variables: {
+        first: 10,
+        before: postsData?.at(0)?.cursor
+      }
+    })
+      .then((res) => {
+        setPostsData((postsData) => {
+          if (postsData === null) {
+            return res.data.postsWithRelay.edges
+          } else {
+            const firstTen = postsData.slice(0, 10)
+            const feed = res.data.postsWithRelay.edges.filter((edge) => !firstTen.some((post) => post?.node?.id === edge?.node?.id))
+            if (feed.length > 0) {
+              message.success('新加载了' + feed.length + '条帖子')
+            } else {
+              message.info('没有新的帖子')
+            }
+            return [...feed, ...postsData]
+          }
+        })
+      }).catch((err) => {
+        console.log(err)
+      })
+  }
+
   return (
     <>
       <div className="pt-16 pb-4 px-3 font-sans text-left mx-auto md:w-5/12">
+        <BackTop />
+        <div className="fles flex-col py-2 bg-white mb-3 rounded-md text-center font-medium" onClick={(e) => {
+          e.stopPropagation()
+          fetchMore().then(() => setLoading(false))
+        }}><div className='inline-block pl-1'>Fetch More <ReloadOutlined /></div></div>
         {postsData &&
           postsData.map(
             ({
               node
             }: PostsWithRelayTypes.PostsWithRelay_postsWithRelay_edges) => (
-              <div key={node?.id} className={`mb-3 ${node?.creator?.unionId && node.creator.openId ? 'bg-pink-100' : 'bg-gray-200'} p-3 rounded-lg flex flex-row`}>
+              <div key={node?.id} onClick={() => console.log(node)} className={`mb-3 ${node?.creator?.unionId && node.creator.openId ? 'bg-pink-100' : 'bg-gray-200'} p-3 rounded-lg flex flex-row`}>
                 <div className='flex flex-col mr-3'>
                   <img className='h-12 w-12 rounded-full' src={`${node?.creator?.avatarImageUrl ?? 'https://dev-1306842204.cos.ap-guangzhou.myqcloud.com/defaultAvatars/anonymous.jpg'}`}></img>
                 </div>
@@ -121,7 +160,8 @@ export default function InfinityScroll() {
                       className="rounded-md my-1.5"
                       src={image + '?imageMogr2/format/webp'}
                       key={image}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation()
                         ImageViewer.Multi.show({
                           images: node?.images ?? [],
                           defaultIndex: idx
@@ -149,7 +189,8 @@ export default function InfinityScroll() {
                         {node?.votes.totalCount}
                       </div>
                     </div>
-                    <div className='flex-initial' onClick={() => {
+                    <div className='flex-initial' onClick={(e) => {
+                      e.stopPropagation()
                       deletePostRef.current = node!.id
                       setActionSheetVisible(true)
                     }}>
@@ -159,17 +200,6 @@ export default function InfinityScroll() {
                       </div>
                     </div>
                   </div>
-                  {/* <button
-                    className={
-                      'bg-red-500 text-white w-full font-bold py-2 rounded-md mt-2'
-                    }
-                    onClick={() => {
-                      deletePostRef.current = node!.id
-                      setActionSheetVisible(true)
-                    }}
-                  >
-                  Delete
-                  </button> */}
                 </div>
               </div>
             )
@@ -182,7 +212,7 @@ export default function InfinityScroll() {
         cancelText="取消"
         onClose={() => setActionSheetVisible(false)}
       />
-      <InfiniteScroll loadMore={loadMore} hasMore={hasMore} />
+      <InfiniteScroll loadMore={loadMore} threshold={100} hasMore={hasMore} />
     </>
   )
 }
