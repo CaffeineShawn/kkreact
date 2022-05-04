@@ -1,11 +1,11 @@
-import { CommentOutlined, HeartOutlined, ReloadOutlined, WarningOutlined } from '@ant-design/icons'
+import { CheckCircleFilled, CommentOutlined, HeartOutlined, ReloadOutlined, WarningOutlined } from '@ant-design/icons'
 import { BackTop, message } from 'antd'
 import {
   ActionSheet,
   Dialog,
   Image,
   ImageViewer,
-  InfiniteScroll
+  InfiniteScroll, Stepper
 } from 'antd-mobile'
 import { Action } from 'antd-mobile/es/components/action-sheet'
 import React, { useRef, useState } from 'react'
@@ -23,6 +23,7 @@ import { DELETE_POST } from '../graphql/mutations/delete'
 import { POSTS_WITH_RELAY } from '../graphql/queries/queries'
 import { client, clientWithToken } from '../main'
 import { getTimeStr } from '../utils/cast2Str'
+import Request from '../utils/request'
 
 export default function InfinityScroll() {
   const [postsData, setPostsData] = useState<
@@ -32,7 +33,23 @@ export default function InfinityScroll() {
   const [loading, setLoading] = useState(false)
   const [startCursor, setStartCursor] = useState<string | null>(null)
   const [actionSheetVisible, setActionSheetVisible] = useState(false)
-  const deletePostRef = useRef<string | null>(null)
+  const postRef = useRef<string | null>(null)
+  const [showMask, setShowMask] = useState(false)
+  const [voteCount, setVoteCount] = useState(1)
+  const voteURL = import.meta.env.VITE_BASE_URL + '/vote/manual'
+  const addVotesOnPost = new Request({
+    method: 'GET',
+    timeout: 2000,
+    interceptors: {
+      requestInterceptors: config => {
+        config.headers = {
+          ...config.headers,
+          Authorization: `Bearer ${window.localStorage.getItem('token')}`
+        }
+        return config
+      }
+    }
+  })
   const actions: Action[] = [
     {
       text: '确认删除',
@@ -45,18 +62,18 @@ export default function InfinityScroll() {
             const res = await clientWithToken.mutate<DeletePost, DeletePostVariables>({
               mutation: DELETE_POST,
               variables: {
-                postId: deletePostRef.current!
+                postId: postRef.current!
               },
               fetchPolicy: 'network-only'
             })
             if (res.data?.deletePost.createdAt) {
-              setPostsData(postsData => deletePost(postsData!, deletePostRef.current!))
-              message.success('已删除id为' + deletePostRef.current + '的帖子')
-              console.log('已于' + res.data?.deletePost.createdAt + '删除id为' + deletePostRef.current + '的帖子')
+              setPostsData(postsData => deletePost(postsData!, postRef.current!))
+              message.success('已删除id为' + postRef.current + '的帖子')
+              console.log('已于' + res.data?.deletePost.createdAt + '删除id为' + postRef.current + '的帖子')
             }
           })
           .catch(() => {
-            message.info('已取消删除id为' + deletePostRef.current + '的帖子')
+            message.info('已取消删除id为' + postRef.current + '的帖子')
           })
       }
     }
@@ -129,9 +146,45 @@ export default function InfinityScroll() {
 
   return (
     <>
+      { showMask && <div className="mask mask-gray overflow-hidden flex flex-col items-stretch" onClick={(e) => {
+        e.stopPropagation()
+        setShowMask(false)
+      }}
+      onScroll={(e) => {
+        e.stopPropagation()
+        e.preventDefault()
+      }}>
+        <div className="flex flex-col bg-white py-12 space-y-6 rounded-md my-auto mx-auto w-7/12 px-3" onClick={e => e.stopPropagation()}>
+          {/* <input className="my-auto border-2 border-amber-2 00" type="number" value={voteCount.toString(10)} onChange={val => setVoteCount(Number(val.target.value))}/> */}
+          <div className="flex-initial font-bold text-xl mx-auto">增加点赞数量</div>
+          <div className="flex-1" />
+          <Stepper className="flex-initial mx-auto" min={0} max={100} value={voteCount} onChange={val => setVoteCount(val)}/>
+          <div className="flex-1" />
+          <button className="bg-purple-700 rounded-md py-1.5 font-bold text-white" onClick={e => {
+            e.stopPropagation()
+            setVoteCount(1)
+            addVotesOnPost.instance.get(`${voteURL}?postId=${postRef.current}&count=${voteCount}`)
+              .then(res => {
+                setShowMask(false)
+                return res
+              })
+              .then(res => {
+                Dialog.confirm({
+                  header: (<CheckCircleFilled style={{
+                    fontSize: 64,
+                    color: 'var(--adm-color-success)'
+                  }} />),
+                  content: res.data.toString()
+                }).catch(err => console.log(err))
+              })
+          }
+          }>Confirm</button>
+        </div>
+      </div>
+      }
       <div className="pt-16 pb-4 px-3 font-sans text-left mx-auto md:w-5/12">
         <BackTop />
-        <div className="fles flex-col py-2 bg-white mb-3 rounded-md text-center font-medium" onClick={(e) => {
+        <div className="flex flex-col py-2 bg-white mb-3 rounded-md text-center font-medium" onClick={(e) => {
           e.stopPropagation()
           fetchMore().then(() => setLoading(false))
         }}><div className='inline-block pl-1'>Fetch More <ReloadOutlined /></div></div>
@@ -183,15 +236,19 @@ export default function InfinityScroll() {
                         {node?.commentsWithRelay.totalCount}
                       </div>
                     </div>
-                    <div className='mx-auto'>
+                    <div className='mx-auto' onClick={(e) => {
+                      e.stopPropagation()
+                      postRef.current = node!.id
+                      setShowMask(true)
+                    }}>
                       <HeartOutlined/>
-                      <div className='inline-block ml-1'>
+                      <div className='inline-block ml-1' >
                         {node?.votes.totalCount}
                       </div>
                     </div>
                     <div className='flex-initial' onClick={(e) => {
                       e.stopPropagation()
-                      deletePostRef.current = node!.id
+                      postRef.current = node!.id
                       setActionSheetVisible(true)
                     }}>
                       <WarningOutlined/>
