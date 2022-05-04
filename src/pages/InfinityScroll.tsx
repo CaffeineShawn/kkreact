@@ -146,7 +146,7 @@ export default function InfinityScroll() {
 
   return (
     <>
-      { showMask && <div className="mask mask-gray overflow-hidden flex flex-col items-stretch" onClick={(e) => {
+      { showMask && <div className="mask mask-gray overflow-hidden flex flex-col" onClick={(e) => {
         e.stopPropagation()
         setShowMask(false)
       }}
@@ -154,13 +154,13 @@ export default function InfinityScroll() {
         e.stopPropagation()
         e.preventDefault()
       }}>
-        <div className="flex flex-col bg-white py-12 space-y-6 rounded-md my-auto mx-auto w-7/12 px-3" onClick={e => e.stopPropagation()}>
+        <div className="flex flex-col bg-white py-8 space-y-6 rounded-md my-auto mx-6 md:mx-auto md:w-5/12 px-3" onClick={e => e.stopPropagation()}>
           {/* <input className="my-auto border-2 border-amber-2 00" type="number" value={voteCount.toString(10)} onChange={val => setVoteCount(Number(val.target.value))}/> */}
           <div className="flex-initial font-bold text-xl mx-auto">增加点赞数量</div>
           <div className="flex-1" />
           <Stepper className="flex-initial mx-auto" min={0} max={100} value={voteCount} onChange={val => setVoteCount(val)}/>
           <div className="flex-1" />
-          <button className="bg-purple-700 rounded-md py-1.5 font-bold text-white" onClick={e => {
+          <button disabled={voteCount === 0} className="bg-purple-700 rounded-md py-1.5 font-bold text-white" onClick={e => {
             e.stopPropagation()
             setVoteCount(1)
             addVotesOnPost.instance.get(`${voteURL}?postId=${postRef.current}&count=${voteCount}`)
@@ -175,7 +175,7 @@ export default function InfinityScroll() {
                     color: 'var(--adm-color-success)'
                   }} />),
                   content: res.data.toString()
-                }).catch(err => console.log(err))
+                }).then(() => setVoteCount(0)).catch(err => console.log(err))
               })
           }
           }>Confirm</button>
