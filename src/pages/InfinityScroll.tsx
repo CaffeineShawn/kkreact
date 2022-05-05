@@ -1,18 +1,22 @@
-import { CheckCircleFilled, CommentOutlined, HeartOutlined, ReloadOutlined, WarningOutlined } from '@ant-design/icons'
+import {
+  CheckCircleFilled,
+  CommentOutlined,
+  HeartOutlined,
+  ReloadOutlined,
+  WarningOutlined
+} from '@ant-design/icons'
 import { BackTop, message } from 'antd'
 import {
   ActionSheet,
   Dialog,
   Image,
   ImageViewer,
-  InfiniteScroll, Stepper
+  InfiniteScroll,
+  Stepper
 } from 'antd-mobile'
 import { Action } from 'antd-mobile/es/components/action-sheet'
 import React, { useRef, useState } from 'react'
-import {
-  DeletePost,
-  DeletePostVariables
-} from '../generated/DeletePost'
+import { DeletePost, DeletePostVariables } from '../generated/DeletePost'
 import * as PostsWithRelayTypes from '../generated/PostsWithRelay'
 import {
   PostsWithRelay,
@@ -41,7 +45,7 @@ export default function InfinityScroll() {
     method: 'GET',
     timeout: 2000,
     interceptors: {
-      requestInterceptors: config => {
+      requestInterceptors: (config) => {
         config.headers = {
           ...config.headers,
           Authorization: `Bearer ${window.localStorage.getItem('token')}`
@@ -59,7 +63,10 @@ export default function InfinityScroll() {
       onClick: async () => {
         await Dialog.confirm({ content: '确认删除？' })
           .then(async () => {
-            const res = await clientWithToken.mutate<DeletePost, DeletePostVariables>({
+            const res = await clientWithToken.mutate<
+              DeletePost,
+              DeletePostVariables
+            >({
               mutation: DELETE_POST,
               variables: {
                 postId: postRef.current!
@@ -67,9 +74,17 @@ export default function InfinityScroll() {
               fetchPolicy: 'network-only'
             })
             if (res.data?.deletePost.createdAt) {
-              setPostsData(postsData => deletePost(postsData!, postRef.current!))
+              setPostsData((postsData) =>
+                deletePost(postsData!, postRef.current!)
+              )
               message.success('已删除id为' + postRef.current + '的帖子')
-              console.log('已于' + res.data?.deletePost.createdAt + '删除id为' + postRef.current + '的帖子')
+              console.log(
+                '已于' +
+                  res.data?.deletePost.createdAt +
+                  '删除id为' +
+                  postRef.current +
+                  '的帖子'
+              )
             }
           })
           .catch(() => {
@@ -93,7 +108,8 @@ export default function InfinityScroll() {
         variables: {
           first: 10,
           after: startCursor
-        }
+        },
+        fetchPolicy: 'network-only'
       })
       .then((res) => {
         setPostsData((postsData) => {
@@ -117,20 +133,25 @@ export default function InfinityScroll() {
       return
     }
     setLoading(true)
-    await client.query<PostsWithRelay, PostsWithRelayVariables>({
-      query: POSTS_WITH_RELAY,
-      variables: {
-        first: 10,
-        before: postsData?.at(0)?.cursor
-      }
-    })
+    await client
+      .query<PostsWithRelay, PostsWithRelayVariables>({
+        query: POSTS_WITH_RELAY,
+        variables: {
+          first: 10,
+          before: postsData?.at(0)?.cursor
+        },
+        fetchPolicy: 'network-only'
+      })
       .then((res) => {
         setPostsData((postsData) => {
           if (postsData === null) {
             return res.data.postsWithRelay.edges
           } else {
             const firstTen = postsData.slice(0, 10)
-            const feed = res.data.postsWithRelay.edges.filter((edge) => !firstTen.some((post) => post?.node?.id === edge?.node?.id))
+            const feed = res.data.postsWithRelay.edges.filter(
+              (edge) =>
+                !firstTen.some((post) => post?.node?.id === edge?.node?.id)
+            )
             if (feed.length > 0) {
               message.success('新加载了' + feed.length + '条帖子')
             } else {
@@ -139,74 +160,129 @@ export default function InfinityScroll() {
             return [...feed, ...postsData]
           }
         })
-      }).catch((err) => {
+      })
+      .catch((err) => {
         console.log(err)
       })
   }
 
   return (
     <>
-      { showMask && <div className="mask mask-gray overflow-hidden flex flex-col" onClick={(e) => {
-        e.stopPropagation()
-        setShowMask(false)
-      }}
-      onScroll={(e) => {
-        e.stopPropagation()
-        e.preventDefault()
-      }}>
-        <div className="flex flex-col bg-white py-8 space-y-6 rounded-md my-auto mx-6 md:mx-auto md:w-5/12 px-3" onClick={e => e.stopPropagation()}>
-          {/* <input className="my-auto border-2 border-amber-2 00" type="number" value={voteCount.toString(10)} onChange={val => setVoteCount(Number(val.target.value))}/> */}
-          <div className="flex-initial font-bold text-xl mx-auto">增加点赞数量</div>
-          <div className="flex-1" />
-          <Stepper className="flex-initial mx-auto" min={0} max={100} value={voteCount} onChange={val => setVoteCount(val)}/>
-          <div className="flex-1" />
-          <button disabled={voteCount === 0} className="bg-purple-700 rounded-md py-1.5 font-bold text-white" onClick={e => {
+      {showMask && (
+        <div
+          className="mask mask-gray overflow-hidden flex flex-col"
+          onClick={(e) => {
             e.stopPropagation()
+            setShowMask(false)
             setVoteCount(1)
-            addVotesOnPost.instance.get(`${voteURL}?postId=${postRef.current}&count=${voteCount}`)
-              .then(res => {
-                setShowMask(false)
-                return res
-              })
-              .then(res => {
-                Dialog.confirm({
-                  header: (<CheckCircleFilled style={{
-                    fontSize: 64,
-                    color: 'var(--adm-color-success)'
-                  }} />),
-                  content: `成功点赞${res.data.successCount}次`
-                }).then(() => setVoteCount(0)).catch(err => console.log(err))
-              })
-          }
-          }>Confirm</button>
+          }}
+          onScroll={(e) => {
+            e.stopPropagation()
+            e.preventDefault()
+          }}
+        >
+          <div
+            className="flex flex-col bg-white py-8 space-y-6 rounded-md my-auto mx-6 md:mx-auto md:w-5/12 px-3"
+            onClick={(e) => {
+              e.stopPropagation()
+            }}
+          >
+            <div className="flex-initial font-bold text-xl mx-auto">
+              增加点赞数量
+            </div>
+            <div className="flex-1" />
+            <Stepper
+              className="flex-initial mx-auto"
+              min={0}
+              max={100}
+              value={voteCount}
+              onChange={(val) => setVoteCount(val)}
+            />
+            <div className="flex-1" />
+            <button
+              disabled={voteCount === 0}
+              className="bg-purple-700 rounded-md py-1.5 font-bold text-white"
+              onClick={(e) => {
+                e.stopPropagation()
+                addVotesOnPost.instance
+                  .get(
+                    `${voteURL}?postId=${postRef.current}&count=${voteCount}`
+                  )
+                  .then((res) => {
+                    setShowMask(false)
+                    return res
+                  })
+                  .then((res) => {
+                    Dialog.confirm({
+                      title: '操作成功',
+                      header: (
+                        <CheckCircleFilled
+                          style={{
+                            fontSize: 64,
+                            color: 'var(--adm-color-success)'
+                          }}
+                        />
+                      ),
+                      content: `成功点赞${res.data.successCount}次`,
+                      onConfirm: () => setVoteCount(1)
+                    })
+                  })
+              }}
+            >
+              Confirm
+            </button>
+          </div>
         </div>
-      </div>
-      }
+      )}
       <div className="pt-16 pb-4 px-3 font-sans text-left mx-auto md:w-5/12">
         <BackTop />
-        <div className="flex flex-col py-2 bg-white mb-3 rounded-md text-center font-medium" onClick={(e) => {
-          e.stopPropagation()
-          fetchMore().then(() => setLoading(false))
-        }}><div className='inline-block pl-1'>Fetch More <ReloadOutlined /></div></div>
+        <div
+          className="flex flex-col py-2 bg-white mb-3 rounded-md text-center font-medium"
+          onClick={(e) => {
+            e.stopPropagation()
+            fetchMore().then(() => setLoading(false))
+          }}
+        >
+          <div className="inline-block pl-1">
+            Fetch More <ReloadOutlined />
+          </div>
+        </div>
         {postsData &&
           postsData.map(
             ({
               node
             }: PostsWithRelayTypes.PostsWithRelay_postsWithRelay_edges) => (
-              <div key={node?.id} onClick={() => console.log(node)} className={`mb-3 ${node?.creator?.unionId && node.creator.openId ? 'bg-pink-100' : 'bg-gray-200'} p-3 rounded-lg flex flex-row`}>
-                <div className='flex flex-col mr-3'>
-                  <img className='h-12 w-12 rounded-full' src={`${node?.creator?.avatarImageUrl ?? 'https://dev-1306842204.cos.ap-guangzhou.myqcloud.com/defaultAvatars/anonymous.jpg'}`}></img>
+              <div
+                key={node?.id}
+                onClick={() => console.log(node)}
+                className={`mb-3 ${
+                  node?.creator?.unionId && node.creator.openId
+                    ? 'bg-pink-100'
+                    : 'bg-gray-200'
+                } p-3 rounded-lg flex flex-row`}
+              >
+                <div className="flex flex-col mr-3">
+                  <img
+                    className="h-12 w-12 rounded-full"
+                    src={`${
+                      node?.creator?.avatarImageUrl ??
+                      'https://dev-1306842204.cos.ap-guangzhou.myqcloud.com/defaultAvatars/anonymous.jpg'
+                    }`}
+                  ></img>
                 </div>
-                <div className='flex flex-col w-full flex-nowrap'>
-                  <div className='flex flex-row'>
-                    <div className='flex-initial font-bold'>{node?.creator?.name ?? 'Anonymous'}</div>
-                    <div className='flex-wrap pl-1 font-medium text-gray-500'>
-                      @{`${node?.creator?.id ?? 'Anonymous'} · ${getTimeStr(node?.createdAt!)}`}
+                <div className="flex flex-col w-full flex-nowrap">
+                  <div className="flex flex-row">
+                    <div className="flex-initial font-bold">
+                      {node?.creator?.name ?? 'Anonymous'}
+                    </div>
+                    <div className="flex-wrap pl-1 font-medium text-gray-500">
+                      @
+                      {`${node?.creator?.id ?? 'Anonymous'} · ${getTimeStr(
+                        node?.createdAt!
+                      )}`}
                     </div>
                   </div>
-                  <div>
-                    {node?.content}
-                  </div>
+                  <div>{node?.content}</div>
 
                   {node?.images?.map((image: string, idx: number) => (
                     <Image
@@ -225,34 +301,40 @@ export default function InfinityScroll() {
                   {node?.subject && (
                     <div className="flex">
                       <div className="rounded-lg my-1.5 px-3 text-left bg-white text-blue-600 font-bold">
-                      #{node?.subject!.title}
+                        #{node?.subject!.title}
                       </div>
                     </div>
                   )}
-                  <div className='flex flex-row pt-1'>
-                    <div className='flex-initial'>
-                      <CommentOutlined/>
-                      <div className='inline-block ml-1'>
+                  <div className="flex flex-row pt-1">
+                    <div className="flex-initial">
+                      <CommentOutlined />
+                      <div className="inline-block ml-1">
                         {node?.commentsWithRelay.totalCount}
                       </div>
                     </div>
-                    <div className='mx-auto' onClick={(e) => {
-                      e.stopPropagation()
-                      postRef.current = node!.id
-                      setShowMask(true)
-                    }}>
-                      <HeartOutlined/>
-                      <div className='inline-block ml-1' >
+                    <div
+                      className="mx-auto"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        postRef.current = node!.id
+                        setShowMask(true)
+                      }}
+                    >
+                      <HeartOutlined />
+                      <div className="inline-block ml-1">
                         {node?.votes.totalCount}
                       </div>
                     </div>
-                    <div className='flex-initial' onClick={(e) => {
-                      e.stopPropagation()
-                      postRef.current = node!.id
-                      setActionSheetVisible(true)
-                    }}>
-                      <WarningOutlined/>
-                      <div className='inline-block ml-1'>
+                    <div
+                      className="flex-initial"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        postRef.current = node!.id
+                        setActionSheetVisible(true)
+                      }}
+                    >
+                      <WarningOutlined />
+                      <div className="inline-block ml-1">
                         {node?.reports.totalCount}
                       </div>
                     </div>

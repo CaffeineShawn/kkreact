@@ -1,4 +1,9 @@
-import { InboxOutlined } from '@ant-design/icons'
+import {
+  CheckCircleFilled,
+  ExclamationCircleFilled,
+  InboxOutlined,
+  WarningOutlined
+} from '@ant-design/icons'
 import { message, Upload } from 'antd'
 import { Dialog } from 'antd-mobile'
 import React from 'react'
@@ -13,6 +18,27 @@ const uploadProps = {
   maxCount: 1,
   onStart(file: { name: any }) {
     console.log('onStart', file, file.name)
+  },
+  onError(err: any, file: any) {
+    Dialog.alert({
+      title: '上传失败',
+      header: (
+        <ExclamationCircleFilled
+          style={{
+            fontSize: 64,
+            color: 'var(--adm-color-warning)'
+          }}
+        />
+      ),
+      content: (
+        <>
+          <div>错误信息{err}</div>
+          <div>
+            如无权限请尝试重新登录管理员账号，其他错误请联系管理员查看后台
+          </div>
+        </>
+      )
+    })
   },
   beforeUpload(file: { name: any }) {
     return new Promise<void>((resolve, reject) => {
@@ -40,7 +66,7 @@ const uploadProps = {
       data: formData,
       timeout: 1000 * 60 * 5,
       interceptors: {
-        requestInterceptors: config => {
+        requestInterceptors: (config) => {
           config.headers = {
             ...headers,
             Authorization: 'Bearer ' + window.localStorage.getItem('token')
@@ -62,18 +88,43 @@ const uploadProps = {
           )
         }
       })
-      .then(res => {
+      .then((res) => {
         onSuccess(res, file)
         console.log(res.data)
-        message.success('上传成功')
+        return res
       })
-      .catch(err => {
+      .then((res) => {
+        Dialog.confirm({
+          header: (
+            <CheckCircleFilled
+              style={{
+                fontSize: 64,
+                color: 'var(--adm-color-success)'
+              }}
+            />
+          ),
+          content: `成功上传内容${res.data.length}条`
+        })
+      })
+      .catch((err) => {
         onError(err, file)
         console.log(err)
       })
 
     return {
       abort() {
+        Dialog.alert({
+          header: (
+            <ExclamationCircleFilled
+              style={{
+                fontSize: 64,
+                color: 'var(--adm-color-warning)'
+              }}
+            />
+          ),
+          title: '上传中断',
+          content: <div>上传意外中断！可能是由于网络环境差，请重试</div>
+        })
         console.log('upload progress is aborted.')
       }
     }
