@@ -152,7 +152,7 @@ const UploadFile = () => {
   return (
     <div className="flex flex-col h-screen items-center justify-center">
       <div className="flex-initial px-3 md:px-0">
-        <Upload.Dragger {...uploadProps}>
+        <Upload.Dragger {...uploadProps} style={ { borderRadius: '8px', padding: '2rem 2rem 2rem 2rem' } }>
           <p className="ant-upload-drag-icon">
             <InboxOutlined/>
           </p>
