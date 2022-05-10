@@ -10,19 +10,19 @@ const Login = () => {
   const [sign, setSign] = useState('')
   const nav = useNavigate()
   return (
-    <Flipped flipId={'login'}>
+    <Flipped flipId={ 'login' }>
       <div
         className={
           'pt-100 h-screen px-2 md:px-0 flex flex-col items-center justify-center'
         }
       >
-        {/* login form */}
+        {/* login form */ }
         <div className="login-form mx-4 flex flex-col items-center bg-white p-8 rounded-md">
           <div className="w-full font-bold text-xl">
             Welcome to the admin page
           </div>
           <div className="w-full text-gray-300">
-            {/* eslint-disable-next-line react/no-unescaped-entities */}
+            {/* eslint-disable-next-line react/no-unescaped-entities */ }
             This is a website for practice only, more functions won't be added
             if purposed.
           </div>
@@ -36,7 +36,7 @@ const Login = () => {
                 name="userId"
                 type="text"
                 required
-                onChange={(event) => setUserId(event.target.value)}
+                onChange={ (event) => setUserId(event.target.value) }
               />
             </div>
             <div className="flex w-full flex-col px-3 mt-8 py-4 bg-gray-200 rounded-md rounded-br-md">
@@ -48,11 +48,11 @@ const Login = () => {
                 name="sign"
                 type="password"
                 required
-                onChange={(event) => setSign(event.target.value)}
+                onChange={ (event) => setSign(event.target.value) }
               />
             </div>
             <button
-              onClick={(event) => {
+              onClick={ (event) => {
                 event.preventDefault()
                 client
                   .mutate({
@@ -73,7 +73,7 @@ const Login = () => {
                     console.log(err)
                     message.error('Wrong user-id or password')
                   })
-              }}
+              } }
               className="mt-8 rounded-md uppercase py-2 w-full bg-purple-500 text-white text-md font-bold"
             >
               Log in

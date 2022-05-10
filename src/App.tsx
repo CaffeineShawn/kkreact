@@ -17,7 +17,7 @@ function Guard({ routeRedirect, destination }: GuardProps) {
   return <> {localStorage.getItem('token') ? (
     destination()
   ) : (
-    <Navigate to={routeRedirect} replace={true} />
+    <Navigate to={routeRedirect} replace={true}/>
   )}</>
 }
 
@@ -49,15 +49,15 @@ function App() {
         </Link>
       </div>
       <Routes>
-        <Route path="/" element={<Home />}></Route>
-        <Route path="/login" element={<Login />}></Route>
+        <Route path="/" element={<Home/>}></Route>
+        <Route path="/login" element={<Login/>}></Route>
         <Route
           path="/upload"
-          element={<Guard routeRedirect="/login" destination={UploadFile} />}
+          element={<Guard routeRedirect="/login" destination={UploadFile}/>}
         />
         <Route
           path="/infinityScroll"
-          element={<Guard routeRedirect="/login" destination={InfinityScroll} />}
+          element={<Guard routeRedirect="/login" destination={InfinityScroll}/>}
         />
       </Routes>
     </div>

@@ -1,8 +1,7 @@
 import {
   CheckCircleFilled,
   ExclamationCircleFilled,
-  InboxOutlined,
-  WarningOutlined
+  InboxOutlined
 } from '@ant-design/icons'
 import { message, Upload } from 'antd'
 import { Dialog } from 'antd-mobile'
@@ -16,10 +15,10 @@ const uploadProps = {
   action: uploadUrl,
   accept: '.xlsx',
   maxCount: 1,
-  onStart(file: { name: any }) {
+  onStart(file: { name: string }) {
     console.log('onStart', file, file.name)
   },
-  onError(err: any, file: any) {
+  onError(err: any, file: { name: string }) {
     Dialog.alert({
       title: '上传失败',
       header: (
@@ -32,9 +31,12 @@ const uploadProps = {
       ),
       content: (
         <>
-          <div>错误信息{err}</div>
-          <div>
-            如无权限请尝试重新登录管理员账号，其他错误请联系管理员查看后台
+          <div style={{ textAlign: 'center' }}>
+            <div>错误信息: {err}</div>
+            <div>错误文件: {file.name}</div>
+            <div>
+              如无权限请尝试重新登录管理员账号，其他错误请联系管理员查看后台
+            </div>
           </div>
         </>
       )
@@ -43,12 +45,27 @@ const uploadProps = {
   beforeUpload(file: { name: any }) {
     return new Promise<void>((resolve, reject) => {
       Dialog.confirm({
-        content: '确定上传' + file.name + '?',
+        title: '警告',
+        content: (
+          <>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ margin: 'auto', position: 'relative' }}>确认上传文件：<span
+                style={{ color: 'red' }}>{file.name}</span>?
+              </div>
+              <div style={{ margin: 'auto', position: 'relative' }}>请确认<span style={{ color: 'red' }}>空白行</span>和<span
+                style={{ color: 'red' }}>发帖日期</span>正确
+              </div>
+            </div>
+          </>
+        ),
+        header: (<ExclamationCircleFilled style={{
+          fontSize: 64,
+          color: 'var(--adm-color-warning)'
+        }}/>),
         onConfirm: () => resolve(),
         onCancel: () => {
           message.error('取消上传')
-          // eslint-disable-next-line prefer-promise-reject-errors
-          return reject()
+          return reject(file)
         }
       })
     })
@@ -137,7 +154,7 @@ const UploadFile = () => {
       <div className="flex-initial px-3 md:px-0">
         <Upload.Dragger {...uploadProps}>
           <p className="ant-upload-drag-icon">
-            <InboxOutlined />
+            <InboxOutlined/>
           </p>
           <p className="ant-upload-text">请确保上传的Excel格式正确</p>
           <p className="ant-upload-hint px-2">
