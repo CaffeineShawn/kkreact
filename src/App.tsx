@@ -52,7 +52,10 @@ function App() {
       <Routes>
         <Route path="/" element={<Home/>}></Route>
         <Route path="/login" element={<Login/>}></Route>
-        <Route path="/searchPage" element={<SearchPage/>}></Route>
+        <Route
+          path="/searchPage"
+          element={<Guard routeRedirect="/login" destination={SearchPage}/>}
+        />
         <Route
           path="/upload"
           element={<Guard routeRedirect="/login" destination={UploadFile}/>}
