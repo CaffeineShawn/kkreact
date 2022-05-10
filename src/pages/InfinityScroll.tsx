@@ -31,7 +31,7 @@ export default function InfinityScroll() {
   const [startCursor, setStartCursor] = useState<string | null>(null)
   const [actionSheetVisible, setActionSheetVisible] = useState(false)
   const postRef = useRef<string | null>(null)
-  const [showMask, setAddVotesMask] = useState(false)
+  const [addVotesMask, setAddVotesMask] = useState(false)
   const [voteCount, setVoteCount] = useState(1)
   const voteURL = import.meta.env.VITE_BASE_URL + '/vote/manual'
   const addVotesOnPost = new Request({
@@ -166,7 +166,7 @@ export default function InfinityScroll() {
 
   return (
     <>
-      {showMask && <div className="mask mask-gray overflow-hidden flex flex-col" onClick={(e) => {
+      {addVotesMask && <div className="mask mask-gray overflow-hidden flex flex-col" onClick={(e) => {
         e.stopPropagation()
         setAddVotesMask(false)
       }}
@@ -207,7 +207,7 @@ export default function InfinityScroll() {
         </div>
       </div>
       }
-      {showMask && (
+      {addVotesMask && (
         <div
           className="mask mask-gray overflow-hidden flex flex-col"
           onClick={(e) => {
