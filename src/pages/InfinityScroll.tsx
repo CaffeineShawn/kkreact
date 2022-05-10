@@ -7,8 +7,7 @@ import { BackTop, message } from 'antd'
 import {
   ActionSheet,
   Dialog,
-  InfiniteScroll,
-  Stepper
+  InfiniteScroll, Stepper
 } from 'antd-mobile'
 import { Action } from 'antd-mobile/es/components/action-sheet'
 import React, { useRef, useState } from 'react'

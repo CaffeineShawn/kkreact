@@ -6,8 +6,8 @@ import React, { MouseEventHandler } from 'react'
 
 export interface PostViewProps {
   node: PostViewType
-  onVoteClick: MouseEventHandler<HTMLDivElement>
-  onDeleteClick: MouseEventHandler<HTMLDivElement>
+  onVoteClick?: MouseEventHandler<HTMLDivElement>
+  onDeleteClick?: MouseEventHandler<HTMLDivElement>
 }
 
 export const PostView = ({ node, onVoteClick, onDeleteClick }: PostViewProps) => {
@@ -55,7 +55,7 @@ export const PostView = ({ node, onVoteClick, onDeleteClick }: PostViewProps) =>
           <div className="flex-initial">
             <CommentOutlined/>
             <div className="inline-block ml-1">
-              {node?.commentsWithRelay.totalCount}
+              {node?.trendingComments.totalCount}
             </div>
           </div>
           <div className="mx-auto" onClick={onVoteClick}>

@@ -11,6 +11,8 @@ export const FRAGMENT_POST_FIELDS = gql`
       name
       id
       avatarImageUrl
+      openId
+      unionId
     }
     subject {
       id
@@ -22,6 +24,9 @@ export const FRAGMENT_POST_FIELDS = gql`
       totalCount
       viewerCanUpvote
       viewerHasUpvoted
+    }
+    reports {
+      totalCount
     }
     trendingComments(first: 3) {
       nodes {

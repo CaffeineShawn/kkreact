@@ -6,6 +6,7 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import UploadFile from './pages/UploadFile'
 import InfinityScroll from './pages/InfinityScroll'
+import SearchPage from './pages/SearchPage'
 
 interface GuardProps {
   routeRedirect: string
@@ -51,6 +52,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home/>}></Route>
         <Route path="/login" element={<Login/>}></Route>
+        <Route path="/searchPage" element={<SearchPage/>}></Route>
         <Route
           path="/upload"
           element={<Guard routeRedirect="/login" destination={UploadFile}/>}

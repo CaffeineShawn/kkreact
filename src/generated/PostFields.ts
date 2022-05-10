@@ -25,6 +25,14 @@ export interface PostFields_creator {
    * 用户头像链接
    */
   avatarImageUrl: string | null;
+  /**
+   * 微信openId,注册时传入微信code自动通过微信提供的接口获取获取
+   */
+  openId: string;
+  /**
+   * 微信unionId,注册时传入微信code自动通过微信提供的接口获取获取
+   */
+  unionId: string;
 }
 
 export interface PostFields_subject {
@@ -40,6 +48,11 @@ export interface PostFields_votes {
   totalCount: number;
   viewerCanUpvote: boolean;
   viewerHasUpvoted: boolean;
+}
+
+export interface PostFields_reports {
+  __typename: "ReportsConnection";
+  totalCount: number;
 }
 
 export interface PostFields_trendingComments_nodes_creator {
@@ -141,6 +154,10 @@ export interface PostFields {
    * 帖子的点赞
    */
   votes: PostFields_votes;
+  /**
+   * 帖子收到的举报
+   */
+  reports: PostFields_reports;
   /**
    * 按热度返回评论
    */

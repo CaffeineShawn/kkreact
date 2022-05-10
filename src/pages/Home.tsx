@@ -24,6 +24,12 @@ const Home = () => {
           </Link>
           <Link
             className="font-bold text-md bg-white px-4 py-3 flex justify-center text-center mx-10 my-3 rounded-md"
+            to="/searchPage"
+          >
+            SearchPage
+          </Link>
+          <Link
+            className="font-bold text-md bg-white px-4 py-3 flex justify-center text-center mx-10 my-3 rounded-md"
             to="/upload"
           >
             Upload
