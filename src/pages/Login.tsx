@@ -60,7 +60,8 @@ const Login = () => {
                     variables: {
                       userId: userId,
                       sign: sign
-                    }
+                    },
+                    fetchPolicy: 'network-only'
                   })
                   .then(res => {
                     console.log(res.data)

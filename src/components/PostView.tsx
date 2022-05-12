@@ -1,11 +1,11 @@
-import { PostViewType } from '../types/PostViewType'
 import { getTimeStr } from '../utils/cast2Str'
 import { Image, ImageViewer } from 'antd-mobile'
 import { CommentOutlined, HeartOutlined, WarningOutlined } from '@ant-design/icons'
 import React, { MouseEventHandler } from 'react'
+import { Post } from '../generated/globalTypes'
 
 export interface PostViewProps {
-  node: PostViewType
+  node: Post
   onVoteClick?: MouseEventHandler<HTMLDivElement>
   onDeleteClick?: MouseEventHandler<HTMLDivElement>
 }

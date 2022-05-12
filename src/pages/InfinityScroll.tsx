@@ -11,24 +11,23 @@ import {
 } from 'antd-mobile'
 import { Action } from 'antd-mobile/es/components/action-sheet'
 import React, { useRef, useState } from 'react'
-import { DeletePost, DeletePostVariables } from '../generated/DeletePost'
-import * as PostsWithRelayTypes from '../generated/PostsWithRelay'
-import {
-  PostsWithRelay,
-  PostsWithRelayVariables,
-  PostsWithRelay_postsWithRelay_edges
-} from '../generated/PostsWithRelay'
 import { DELETE_POST } from '../graphql/mutations/delete'
 import { POSTS_WITH_RELAY } from '../graphql/queries/queries'
 import { client, clientWithToken } from '../main'
 import Request from '../utils/request'
 import { PostView } from '../components/PostView'
+import {
+  DeletePostMutation,
+  DeletePostMutationVariables,
+  PostEdge,
+  PostsConnectionWithRelay,
+  QueryPostsWithRelayArgs
+} from '../generated/globalTypes'
 
 export default function InfinityScroll() {
-  const [postsData, setPostsData] = useState<PostsWithRelay_postsWithRelay_edges[] | null>(null)
+  const [postsData, setPostsData] = useState<Array<PostEdge> | null>(null)
   const [hasMore, setHasMore] = useState(true)
   const [loading, setLoading] = useState(false)
-  const [startCursor, setStartCursor] = useState<string | null>(null)
   const [actionSheetVisible, setActionSheetVisible] = useState(false)
   const postRef = useRef<string | null>(null)
   const [addVotesMask, setAddVotesMask] = useState(false)
@@ -63,8 +62,8 @@ export default function InfinityScroll() {
           content: '确认删除？'
         })
           .then(async () => {
-            const res = await clientWithToken.mutate<DeletePost,
-              DeletePostVariables>({
+            const res = await clientWithToken.mutate<DeletePostMutation,
+              DeletePostMutationVariables>({
                 mutation: DELETE_POST,
                 variables: {
                   postId: postRef.current!
@@ -72,8 +71,7 @@ export default function InfinityScroll() {
                 fetchPolicy: 'network-only'
               })
             if (res.data?.deletePost.createdAt) {
-              setPostsData((postsData) =>
-                deletePost(postsData!, postRef.current!)
+              setPostsData((postsData) => postsData!.filter((edge) => edge.node?.id !== postRef.current)
               )
               message.success('已删除id为' + postRef.current + '的帖子')
               console.log(
@@ -92,33 +90,28 @@ export default function InfinityScroll() {
     }
   ]
 
-  function deletePost(
-    postsData: PostsWithRelay_postsWithRelay_edges[],
-    deletedPostId: string
-  ): PostsWithRelay_postsWithRelay_edges[] {
-    return postsData.filter((edge) => edge.node?.id !== deletedPostId)
-  }
-
   async function loadMore() {
     await client
-      .query<PostsWithRelay, PostsWithRelayVariables>({
+      .query<PostsConnectionWithRelay, QueryPostsWithRelayArgs>({
         query: POSTS_WITH_RELAY,
         variables: {
           first: 10,
-          after: startCursor
+          after: postsData?.length ? postsData[postsData.length - 1].cursor : null
         },
         fetchPolicy: 'network-only'
       })
-      .then((res) => {
-        setPostsData((postsData) => {
-          if (postsData === null) {
-            return res.data.postsWithRelay.edges
-          } else {
-            return [...postsData, ...res.data.postsWithRelay.edges]
-          }
-        })
-        setStartCursor(res.data.postsWithRelay.pageInfo.endCursor)
-        setHasMore(res.data.postsWithRelay.pageInfo.hasNextPage)
+      .then(res => res.data)
+      .then(({ post }: any) => {
+        const { edges, pageInfo } = post
+        setPostsData(
+          (postsData) => {
+            if (postsData) {
+              return [...postsData, ...edges]
+            } else {
+              return edges
+            }
+          })
+        setHasMore(pageInfo.hasNextPage)
       })
       .catch((err) => {
         console.log(err)
@@ -132,7 +125,7 @@ export default function InfinityScroll() {
     }
     setLoading(true)
     await client
-      .query<PostsWithRelay, PostsWithRelayVariables>({
+      .query<PostsConnectionWithRelay, QueryPostsWithRelayArgs>({
         query: POSTS_WITH_RELAY,
         variables: {
           first: 10,
@@ -140,14 +133,17 @@ export default function InfinityScroll() {
         },
         fetchPolicy: 'network-only'
       })
-      .then((res) => {
+      .then(res => res.data)
+      .then(({ post }: any) => {
+        const { edges } = post
+        console.log('postsData', postsData)
         setPostsData((postsData) => {
           if (postsData === null) {
-            return res.data.postsWithRelay.edges
+            return edges
           } else {
             const firstTen = postsData.slice(0, 10)
-            const feed = res.data.postsWithRelay.edges.filter(
-              (edge) =>
+            const feed = edges.filter(
+              (edge: PostEdge) =>
                 !firstTen.some((post) => post?.node?.id === edge?.node?.id)
             )
             if (feed.length > 0) {
@@ -287,23 +283,20 @@ export default function InfinityScroll() {
           </div>
         </div>
         {postsData &&
-          postsData.map(
-            ({
-              node
-            }: PostsWithRelayTypes.PostsWithRelay_postsWithRelay_edges) => (
-              <PostView key={node?.id} node={node!}
-                onVoteClick={e => {
-                  e.stopPropagation()
-                  postRef.current = node!.id
-                  setAddVotesMask(true)
-                }}
-                onDeleteClick={e => {
-                  e.stopPropagation()
-                  postRef.current = node!.id
-                  setActionSheetVisible(true)
-                }
-                }/>
-            )
+          postsData.map(({ node }) => (
+            <PostView key={node?.id} node={node!}
+              onVoteClick={e => {
+                e.stopPropagation()
+                postRef.current = node!.id
+                setAddVotesMask(true)
+              }}
+              onDeleteClick={e => {
+                e.stopPropagation()
+                postRef.current = node!.id
+                setActionSheetVisible(true)
+              }
+              }/>
+          )
           )}
       </div>
       <ActionSheet

@@ -3,8 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "gen": "yarn run apollo client:codegen --target typescript --endpoint=https://api.szlikeyou.com/graphql --outputFlat --includes \"./src/graphql/**/*.{ts,tsx}\" --excludes \"src/generated\" src/generated",
-    "dev": "vite",
+    "dev": "vite dev",
+    "gen": "graphql-codegen --config codegen.yml",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "cert": "rm -rf .cert && mkdir -p .cert && mkcert -key-file ./.cert/key.pem -cert-file ./.cert/cert.pem 'localhost'"
@@ -12,12 +12,11 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@apollo/client": "^3.5.10",
+    "@graphql-codegen/cli": "^2.6.2",
     "antd": "^4.19.5",
     "antd-mobile": "^5.9.5",
-    "apollo": "2.33.10",
-    "apollo-codegen-core": "0.40.3",
-    "apollo-language-server": "1.26.3",
     "axios": "^0.26.1",
+    "graphql": "^16.5.0",
     "postcss-import": "^14.1.0",
     "postcss-nested": "^5.0.6",
     "react": "^17.0.2",
@@ -27,6 +26,10 @@
     "react-transition-group": "^4.4.2"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "2.6.2",
+    "@graphql-codegen/typescript": "2.4.11",
+    "@graphql-codegen/typescript-operations": "^2.4.0",
+    "@graphql-codegen/typescript-react-apollo": "3.2.14",
     "@tailwindcss/line-clamp": "^0.4.0",
     "@types/react": "^17.0.33",
     "@types/react-dom": "^17.0.10",

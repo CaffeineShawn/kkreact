@@ -1,9 +1,4 @@
 import React, { useRef, useState } from 'react'
-import {
-  SearchPosts,
-  SearchPosts_posts_edges,
-  SearchPosts_posts_edges_node_Post, SearchPostsVariables
-} from '../generated/SearchPosts'
 import { client, clientWithToken } from '../main'
 import { SEARCH_POSTS } from '../graphql/queries/queries'
 import { ActionSheet, Dialog, InfiniteScroll, SearchBar, Stepper } from 'antd-mobile'
@@ -12,13 +7,18 @@ import { BackTop, message } from 'antd'
 import Request from '../utils/request'
 import { Action } from 'antd-mobile/es/components/action-sheet'
 import { CheckCircleFilled, ExclamationCircleFilled } from '@ant-design/icons'
-import { DeletePost, DeletePostVariables } from '../generated/DeletePost'
 import { DELETE_POST } from '../graphql/mutations/delete'
+import {
+  DeletePostMutation,
+  DeletePostMutationVariables, Post,
+  SearchPostsQuery,
+  SearchPostsQueryVariables, SearchResultItemEdge
+} from '../generated/globalTypes'
 
 export default function SearchPage() {
   const [keyword, setKeyword] = useState('')
   const [hasMoreResults, setHasMoreResults] = useState(true)
-  const [results, setResults] = useState<SearchPosts_posts_edges[] | null>(null)
+  const [results, setResults] = useState<Array<SearchResultItemEdge>>([])
   const [actionSheetVisible, setActionSheetVisible] = useState(false)
   const postRef = useRef<string | null>(null)
   const [addVotesMask, setAddVotesMask] = useState(false)
@@ -53,8 +53,8 @@ export default function SearchPage() {
           content: '确认删除？'
         })
           .then(async () => {
-            const res = await clientWithToken.mutate<DeletePost,
-              DeletePostVariables>({
+            const res = await clientWithToken.mutate<DeletePostMutation,
+              DeletePostMutationVariables>({
                 mutation: DELETE_POST,
                 variables: {
                   postId: postRef.current!
@@ -84,23 +84,18 @@ export default function SearchPage() {
   ]
 
   async function fetchResults() {
-    await client.query<SearchPosts, SearchPostsVariables>({
+    await client.query<SearchPostsQuery, SearchPostsQueryVariables>({
       query: SEARCH_POSTS,
       variables: {
         keyword: keyword,
         after: results?.length ? results[results.length - 1].cursor : null
       },
       fetchPolicy: 'network-only'
-    }).then((res) => {
-      setResults((results) => {
-        if (results === null) {
-          return res.data.posts.edges
-        } else {
-          return [...results, ...res.data.posts.edges]
-        }
-      })
+    }).then(({ data }) => {
+      setResults((results) => [...results, ...(data.posts.edges as Array<SearchResultItemEdge>)]
+      )
       console.log(results)
-      setHasMoreResults(res.data.posts.pageInfo.hasNextPage)
+      setHasMoreResults(data.posts.pageInfo.hasNextPage)
     }).catch((err) => {
       console.log(err)
     })
@@ -221,7 +216,7 @@ export default function SearchPage() {
           <SearchBar onChange={(e) => setKeyword(e)} onSearch={keyword => {
             const trimmed = keyword.trim()
             if (trimmed.length > 0) {
-              setResults(null)
+              setResults([])
               fetchResults()
                 .then(message.success('获取搜索结果成功'))
             }
@@ -229,7 +224,7 @@ export default function SearchPage() {
         </div>
         {
           results && results.map((result) => {
-            const node = result.node as SearchPosts_posts_edges_node_Post
+            const node = result.node as Post
             return (
               <PostView key={node.id} node={node} onVoteClick={e => {
                 e.stopPropagation()

@@ -47,7 +47,7 @@ const POSTS_WITH_RELAY = gql`
         $last: Int
         $before: String
     ) {
-        postsWithRelay(first: $first, after: $after, last: $last, before: $before) {
+        post: postsWithRelay(first: $first, after: $after, last: $last, before: $before) {
             edges {
                 node {
                     ...PostFields
