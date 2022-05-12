@@ -14,8 +14,8 @@ export const CommentView = ({ node }: CommentViewProps) => {
       console.log(node)
     }}>
       <div className="h-[1px] bg-gray-300 rounded" />
-      <div className="flex flex-row items-center mt-2">
-        <img className="h-8 w-8 rounded-full my-1 mr-2" alt="https://dev-1306842204.cos.ap-guangzhou.myqcloud.com/defaultAvatars/anonymous.jpg"
+      <div className="flex flex-row items-center mt-2 pl-2">
+        <img className="h-8 w-8 rounded-full my-1 mr-4" alt="https://dev-1306842204.cos.ap-guangzhou.myqcloud.com/defaultAvatars/anonymous.jpg"
           src={node.creator?.avatarImageUrl ?? 'https://dev-1306842204.cos.ap-guangzhou.myqcloud.com/defaultAvatars/anonymous.jpg'}
         />
         <div className="flex flex-row">
