@@ -7,6 +7,10 @@ import { message, Upload } from 'antd'
 import { Dialog } from 'antd-mobile'
 import React from 'react'
 import Request from '../utils/request'
+import { clientWithToken } from '../main'
+import { WHO_AM_I } from '../graphql/queries/queries'
+import { WhoAmIQuery, WhoAmIQueryVariables } from '../generated/globalTypes'
+import { notAuthed } from '../utils/notAuthed'
 
 const uploadUrl = import.meta.env.VITE_UPLOAD_URL
 
@@ -44,30 +48,37 @@ const uploadProps = {
   },
   beforeUpload(file: { name: any }) {
     return new Promise<void>((resolve, reject) => {
-      Dialog.confirm({
-        title: '警告',
-        content: (
-          <>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ margin: 'auto', position: 'relative' }}>确认上传文件：<span
-                style={{ color: 'red' }}>{file.name}</span>?
-              </div>
-              <div style={{ margin: 'auto', position: 'relative' }}>请确认<span style={{ color: 'red' }}>空白行</span>和<span
-                style={{ color: 'red' }}>发帖日期</span>正确
-              </div>
-            </div>
-          </>
-        ),
-        header: (<ExclamationCircleFilled style={{
-          fontSize: 64,
-          color: 'var(--adm-color-warning)'
-        }}/>),
-        onConfirm: () => resolve(),
-        onCancel: () => {
-          message.error('取消上传')
-          return reject(file)
+      clientWithToken.query<WhoAmIQuery, WhoAmIQueryVariables>({
+        query: WHO_AM_I
+      }).then(({ data }) => {
+        if (data.whoAmI.__typename === 'Admin' && data.whoAmI.credential?.createdAt != null) {
+          Dialog.confirm({
+            title: '警告',
+            content: (
+              <>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ margin: 'auto', position: 'relative' }}>确认上传文件：<span
+                    style={{ color: 'red' }}>{file.name}</span>?
+                  </div>
+                  <div style={{ margin: 'auto', position: 'relative' }}>请确认<span style={{ color: 'red' }}>空白行</span>和<span
+                    style={{ color: 'red' }}>发帖日期</span>正确
+                  </div>
+                </div>
+              </>
+            ),
+            header: (<ExclamationCircleFilled style={{
+              fontSize: 64,
+              color: 'var(--adm-color-warning)'
+            }}/>),
+            onConfirm: () => resolve(),
+            onCancel: () => {
+              message.error('取消上传')
+              return reject(file)
+            }
+          })
         }
       })
+        .catch(err => notAuthed(err))
     })
   },
   customRequest(options: any) {
@@ -140,7 +151,7 @@ const uploadProps = {
             />
           ),
           title: '上传中断',
-          content: <div>上传意外中断！可能是由于网络环境差，请重试</div>
+          content: <div style={{ textAlign: 'center', margin: 'auto' }}>上传意外中断！可能是由于网络环境差，请重试</div>
         })
         console.log('upload progress is aborted.')
       }
