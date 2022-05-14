@@ -43,6 +43,11 @@ code {
   background-image: linear-gradient(315deg, #9921e8 0%, #5f72be 74%);
 }
 
+.class-input {
+  appearance: none;
+  border-radius: 0;
+}
+
 input,
 input::before,
 input::after,

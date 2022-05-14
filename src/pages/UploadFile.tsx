@@ -137,6 +137,7 @@ const uploadProps = {
       .catch((err) => {
         onError(err, file)
         console.log(err)
+        notAuthed(err)
       })
 
     return {

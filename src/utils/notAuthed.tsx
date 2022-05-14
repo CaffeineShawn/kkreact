@@ -14,6 +14,6 @@ export const notAuthed = (err: any) => {
   }).then(() => {
     console.log('remove token')
     localStorage.removeItem('token')
-    window.location.reload()
+    location.href = '/login'
   })
 }

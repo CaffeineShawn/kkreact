@@ -24,7 +24,7 @@ export const clientWithToken = new ApolloClient({
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <BrowserRouter>
+    <BrowserRouter basename="/">
       <App/>
     </BrowserRouter>
   </ApolloProvider>,
