@@ -12,7 +12,6 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@apollo/client": "^3.5.10",
-    "@graphql-codegen/cli": "^2.6.2",
     "antd": "^4.19.5",
     "antd-mobile": "^5.9.5",
     "axios": "^0.26.1",
