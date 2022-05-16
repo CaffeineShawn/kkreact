@@ -14,6 +14,7 @@ import {
   SearchPostsQuery,
   SearchPostsQueryVariables, SearchResultItemEdge
 } from '../generated/globalTypes'
+import { notAuthed } from '../utils/notAuthed'
 
 export default function SearchPage() {
   const [keyword, setKeyword] = useState('')
@@ -76,8 +77,8 @@ export default function SearchPage() {
               )
             }
           })
-          .catch(() => {
-            message.info('已取消删除id为' + postRef.current + '的帖子')
+          .catch((err) => {
+            notAuthed(err)
           })
       }
     }
@@ -202,6 +203,8 @@ export default function SearchPage() {
                       content: `成功点赞${res.data.successCount}次`,
                       onConfirm: () => setVoteCount(1)
                     })
+                  }).catch((err) => {
+                    notAuthed(err)
                   })
               }}
             >
