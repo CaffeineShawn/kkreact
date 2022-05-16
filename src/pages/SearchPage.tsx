@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { client, clientWithToken } from '../main'
+import { client } from '../main'
 import { SEARCH_POSTS } from '../graphql/queries/queries'
 import { ActionSheet, Dialog, InfiniteScroll, SearchBar, Stepper } from 'antd-mobile'
 import { PostView } from '../components/PostView'
@@ -54,7 +54,7 @@ export default function SearchPage() {
           content: '确认删除？'
         })
           .then(async () => {
-            const res = await clientWithToken.mutate<DeletePostMutation,
+            const res = await client.mutate<DeletePostMutation,
               DeletePostMutationVariables>({
                 mutation: DELETE_POST,
                 variables: {

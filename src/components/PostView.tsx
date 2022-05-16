@@ -4,6 +4,7 @@ import { CommentOutlined, HeartOutlined, WarningOutlined } from '@ant-design/ico
 import React, { MouseEventHandler } from 'react'
 import { Post } from '../generated/globalTypes'
 import { CommentView } from './CommentView'
+import { message } from 'antd'
 
 export interface PostViewProps {
   node: Post
@@ -17,15 +18,18 @@ export const PostView = ({ node, onVoteClick, onDeleteClick }: PostViewProps) =>
 
       <div onClick={() => console.log(node)} className="flex flex-row">
         <div className="flex flex-col mr-3">
-          <img className="h-12 w-12 rounded-full"
-            alt="https://dev-1306842204.cos.ap-guangzhou.myqcloud.com/defaultAvatars/anonymous.jpg"
-            src={node.creator?.avatarImageUrl ?? 'https://dev-1306842204.cos.ap-guangzhou.myqcloud.com/defaultAvatars/anonymous.jpg'}></img>
+          <img className="h-12 w-12 rounded-full" onClick={(e) => {
+            e.stopPropagation()
+            message.info(`${node.creator?.unionId ? '微信' : ''}用户 ${node.creator?.id}`)
+          }}
+          alt="https://dev-1306842204.cos.ap-guangzhou.myqcloud.com/defaultAvatars/anonymous.jpg"
+          src={node.creator?.avatarImageUrl ?? 'https://dev-1306842204.cos.ap-guangzhou.myqcloud.com/defaultAvatars/anonymous.jpg'}></img>
         </div>
         <div className="flex flex-col w-full flex-nowrap">
           <div className="flex flex-row">
-            <div className="flex-initial font-bold">{node?.creator?.name ?? 'Anonymous'}</div>
-            <div className="flex-wrap pl-1 font-medium text-gray-500">
-            @{`${node?.creator?.id ?? 'Anonymous'} · ${getTimeStr(node?.createdAt!)}`}
+            <div className="flex-initial font-bold ">{node?.creator?.name ?? 'Anonymous'}</div>
+            <div className="flex-1 pl-1 font-medium text-gray-500">
+              {` · ${getTimeStr(node?.createdAt!)}`}
             </div>
           </div>
           <div>

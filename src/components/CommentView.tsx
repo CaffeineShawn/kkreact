@@ -1,5 +1,6 @@
 import { Comment } from '../generated/globalTypes'
 import React, { MouseEventHandler } from 'react'
+import { message } from 'antd'
 
 export interface CommentViewProps {
   node: Comment;
@@ -15,8 +16,11 @@ export const CommentView = ({ node }: CommentViewProps) => {
     }}>
       <div className="h-[1px] bg-gray-300 rounded" />
       <div className="flex flex-row items-center mt-2 pl-2">
-        <img className="h-8 w-8 rounded-full my-1 mr-4" alt="https://dev-1306842204.cos.ap-guangzhou.myqcloud.com/defaultAvatars/anonymous.jpg"
-          src={node.creator?.avatarImageUrl ?? 'https://dev-1306842204.cos.ap-guangzhou.myqcloud.com/defaultAvatars/anonymous.jpg'}
+        <img className="h-8 w-8 rounded-full my-1 mr-4" onClick={(e) => {
+          e.stopPropagation()
+          message.info(`${node.creator?.unionId ? '微信' : ''}用户 ${node.creator?.id}`)
+        }} alt="https://dev-1306842204.cos.ap-guangzhou.myqcloud.com/defaultAvatars/anonymous.jpg"
+        src={node.creator?.avatarImageUrl ?? 'https://dev-1306842204.cos.ap-guangzhou.myqcloud.com/defaultAvatars/anonymous.jpg'}
         />
         <div className="flex flex-row">
           <div className="flex-initial text-gray-700 font-bold">{node.creator?.name ?? 'Anonymous'}</div>

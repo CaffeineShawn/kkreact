@@ -7,9 +7,6 @@ import { message, Upload } from 'antd'
 import { Dialog } from 'antd-mobile'
 import React from 'react'
 import Request from '../utils/request'
-import { clientWithToken } from '../main'
-import { WHO_AM_I } from '../graphql/queries/queries'
-import { WhoAmIQuery, WhoAmIQueryVariables } from '../generated/globalTypes'
 import { notAuthed } from '../utils/notAuthed'
 
 const uploadUrl = import.meta.env.VITE_UPLOAD_URL

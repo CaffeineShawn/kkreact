@@ -8,37 +8,28 @@ import { BrowserRouter } from 'react-router-dom'
 
 const getToken = () => {
   const token = localStorage.getItem('token')
-  console.log('token', token)
   return token ? `Bearer ${token}` : ''
 }
 
 const authLink = new ApolloLink((operation, forward) => {
-  operation.setContext({
-    headers: {
-      authorization: getToken()
-    }
-  })
+  console.log('operation', operation)
+  if (operation.operationName !== 'PostsWithRelay') {
+    operation.setContext({
+      headers: {
+        authorization: getToken()
+      }
+    })
+  }
   return forward(operation)
 })
 
-const szlikeyouLink = new HttpLink({
+const bsLink = new HttpLink({
   uri: 'https://api.szlikeyou.com/graphql'
 })
 
 export const client = new ApolloClient({
-  link: szlikeyouLink,
-  cache: new InMemoryCache(),
-  headers: {
-    // authorization: `Bearer ${localStorage.getItem('token')}`
-  }
-})
-
-export const clientWithToken = new ApolloClient({
-  link: authLink.concat(szlikeyouLink),
-  cache: new InMemoryCache(),
-  headers: {
-    authorization: getToken()
-  }
+  link: authLink.concat(bsLink),
+  cache: new InMemoryCache()
 })
 
 ReactDOM.render(

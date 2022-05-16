@@ -37,6 +37,8 @@ export const FRAGMENT_POST_FIELDS = gql`
           userId
           name
           id
+          unionId
+          openId
           avatarImageUrl
         }
         anonymous {

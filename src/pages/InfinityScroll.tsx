@@ -13,7 +13,7 @@ import { Action } from 'antd-mobile/es/components/action-sheet'
 import React, { useRef, useState } from 'react'
 import { DELETE_POST } from '../graphql/mutations/delete'
 import { POSTS_WITH_RELAY } from '../graphql/queries/queries'
-import { client, clientWithToken } from '../main'
+import { client } from '../main'
 import Request from '../utils/request'
 import { PostView } from '../components/PostView'
 import {
@@ -63,7 +63,7 @@ export default function InfinityScroll() {
           content: '确认删除？'
         })
           .then(async () => {
-            const res = await clientWithToken.mutate<DeletePostMutation,
+            const res = await client.mutate<DeletePostMutation,
               DeletePostMutationVariables>({
                 mutation: DELETE_POST,
                 variables: {
