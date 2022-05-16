@@ -8,6 +8,9 @@ import { Dialog } from 'antd-mobile'
 import React from 'react'
 import Request from '../utils/request'
 import { notAuthed } from '../utils/notAuthed'
+import { client } from '../main'
+import { WhoAmIQuery, WhoAmIQueryVariables } from '../generated/globalTypes'
+import { WHO_AM_I } from '../graphql/queries/queries'
 
 const uploadUrl = import.meta.env.VITE_UPLOAD_URL
 
@@ -45,40 +48,40 @@ const uploadProps = {
   },
   beforeUpload(file: { name: any }) {
     return new Promise<void>((resolve, reject) => {
-      // clientWithToken.query<WhoAmIQuery, WhoAmIQueryVariables>({
-      //   query: WHO_AM_I,
-      //   fetchPolicy: 'network-only'
-      // }).then(({ data }) => {
-      //   console.log(localStorage.getItem('token'))
-      //   if (data.whoAmI.__typename === 'Admin' && data.whoAmI.credential?.createdAt != null) {
-      Dialog.confirm({
-        title: '警告',
-        content: (
-          <>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ margin: 'auto', position: 'relative' }}>确认上传文件：<span
-                style={{ color: 'red' }}>{file.name}</span>?
-              </div>
-              <div style={{ margin: 'auto', position: 'relative' }}>请确认<span style={{ color: 'red' }}>空白行</span>和<span
-                style={{ color: 'red' }}>发帖日期</span>正确
-              </div>
-            </div>
-          </>
-        ),
-        header: (<ExclamationCircleFilled style={{
-          fontSize: 64,
-          color: 'var(--adm-color-warning)'
-        }}/>),
-        onConfirm: () => resolve(),
-        onCancel: () => {
-          message.error('取消上传')
-          return reject(file)
+      client.query<WhoAmIQuery, WhoAmIQueryVariables>({
+        query: WHO_AM_I,
+        fetchPolicy: 'network-only'
+      }).then(({ data }) => {
+        console.log(localStorage.getItem('token'))
+        if (data.whoAmI.__typename === 'Admin' && data.whoAmI.credential?.createdAt != null) {
+          Dialog.confirm({
+            title: '警告',
+            content: (
+              <>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ margin: 'auto', position: 'relative' }}>确认上传文件：<span
+                    style={{ color: 'red' }}>{file.name}</span>?
+                  </div>
+                  <div style={{ margin: 'auto', position: 'relative' }}>请确认<span style={{ color: 'red' }}>空白行</span>和<span
+                    style={{ color: 'red' }}>发帖日期</span>正确
+                  </div>
+                </div>
+              </>
+            ),
+            header: (<ExclamationCircleFilled style={{
+              fontSize: 64,
+              color: 'var(--adm-color-warning)'
+            }}/>),
+            onConfirm: () => resolve(),
+            onCancel: () => {
+              message.error('取消上传')
+              return reject(file)
+            }
+          })
         }
       })
-    //     }
+        .catch(err => notAuthed(err))
     })
-    //     .catch(err => notAuthed(err, false))
-    // })
   },
   customRequest(options: any) {
     const { action, onSuccess, onError, onProgress, file, headers } = options
@@ -137,7 +140,25 @@ const uploadProps = {
       .catch((err) => {
         onError(err, file)
         console.log(err)
-        notAuthed(err)
+        Dialog.confirm({
+          title: '警告',
+          content: (
+            <>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ margin: 'auto', position: 'relative' }}>
+                  出现了预料之外的错误
+                </div>
+                <div style={{ margin: 'auto', position: 'relative' }}>
+                  {`错误信息: ${JSON.stringify(err)}`}
+                </div>
+              </div>
+            </>
+          ),
+          header: (<ExclamationCircleFilled style={{
+            fontSize: 64,
+            color: 'var(--adm-color-warning)'
+          }}/>)
+        })
       })
 
     return {
