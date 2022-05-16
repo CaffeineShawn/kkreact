@@ -48,38 +48,40 @@ const uploadProps = {
   },
   beforeUpload(file: { name: any }) {
     return new Promise<void>((resolve, reject) => {
-      clientWithToken.query<WhoAmIQuery, WhoAmIQueryVariables>({
-        query: WHO_AM_I
-      }).then(({ data }) => {
-        if (data.whoAmI.__typename === 'Admin' && data.whoAmI.credential?.createdAt != null) {
-          Dialog.confirm({
-            title: '警告',
-            content: (
-              <>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ margin: 'auto', position: 'relative' }}>确认上传文件：<span
-                    style={{ color: 'red' }}>{file.name}</span>?
-                  </div>
-                  <div style={{ margin: 'auto', position: 'relative' }}>请确认<span style={{ color: 'red' }}>空白行</span>和<span
-                    style={{ color: 'red' }}>发帖日期</span>正确
-                  </div>
-                </div>
-              </>
-            ),
-            header: (<ExclamationCircleFilled style={{
-              fontSize: 64,
-              color: 'var(--adm-color-warning)'
-            }}/>),
-            onConfirm: () => resolve(),
-            onCancel: () => {
-              message.error('取消上传')
-              return reject(file)
-            }
-          })
+      // clientWithToken.query<WhoAmIQuery, WhoAmIQueryVariables>({
+      //   query: WHO_AM_I,
+      //   fetchPolicy: 'network-only'
+      // }).then(({ data }) => {
+      //   console.log(localStorage.getItem('token'))
+      //   if (data.whoAmI.__typename === 'Admin' && data.whoAmI.credential?.createdAt != null) {
+      Dialog.confirm({
+        title: '警告',
+        content: (
+          <>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ margin: 'auto', position: 'relative' }}>确认上传文件：<span
+                style={{ color: 'red' }}>{file.name}</span>?
+              </div>
+              <div style={{ margin: 'auto', position: 'relative' }}>请确认<span style={{ color: 'red' }}>空白行</span>和<span
+                style={{ color: 'red' }}>发帖日期</span>正确
+              </div>
+            </div>
+          </>
+        ),
+        header: (<ExclamationCircleFilled style={{
+          fontSize: 64,
+          color: 'var(--adm-color-warning)'
+        }}/>),
+        onConfirm: () => resolve(),
+        onCancel: () => {
+          message.error('取消上传')
+          return reject(file)
         }
       })
-        .catch(err => notAuthed(err))
+    //     }
     })
+    //     .catch(err => notAuthed(err, false))
+    // })
   },
   customRequest(options: any) {
     const { action, onSuccess, onError, onProgress, file, headers } = options
@@ -123,6 +125,7 @@ const uploadProps = {
       })
       .then((res) => {
         Dialog.confirm({
+          title: '上传成功',
           header: (
             <CheckCircleFilled
               style={{

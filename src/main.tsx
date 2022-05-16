@@ -14,11 +14,17 @@ export const client = new ApolloClient({
   }
 })
 
+const getToken = () => {
+  const token = localStorage.getItem('token')
+  console.log('token', token)
+  return token ? `Bearer ${token}` : ''
+}
+
 export const clientWithToken = new ApolloClient({
   uri: 'https://api.szlikeyou.com/graphql',
   cache: new InMemoryCache(),
   headers: {
-    authorization: `Bearer ${localStorage.getItem('token')}`
+    authorization: getToken()
   }
 })
 
