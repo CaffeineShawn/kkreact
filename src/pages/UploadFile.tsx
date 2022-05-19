@@ -94,7 +94,7 @@ const uploadProps = {
       method: 'post',
       url: action,
       data: formData,
-      timeout: 1000 * 60 * 5,
+      timeout: 1000 * 60 * 10,
       interceptors: {
         requestInterceptors: (config) => {
           config.headers = {
@@ -118,24 +118,42 @@ const uploadProps = {
           )
         }
       })
-      .then((res) => {
-        onSuccess(res, file)
-        console.log(res.data)
-        return res
-      })
-      .then((res) => {
-        Dialog.confirm({
-          title: '上传成功',
-          header: (
-            <CheckCircleFilled
-              style={{
-                fontSize: 64,
-                color: 'var(--adm-color-success)'
-              }}
-            />
-          ),
-          content: `成功上传内容${res.data.length}条`
-        })
+      .then(res => {
+        if (res.data !== undefined) {
+          const { length } = res.data.length
+          onSuccess(res, file)
+          Dialog.confirm({
+            title: '上传成功',
+            header: (
+              <CheckCircleFilled
+                style={{
+                  fontSize: 64,
+                  color: 'var(--adm-color-success)'
+                }}
+              />
+            ),
+            content: `成功上传内容${length}条`
+          })
+        } else {
+          Dialog.alert({
+            header: (
+              <ExclamationCircleFilled
+                style={{
+                  fontSize: 64,
+                  color: 'var(--adm-color-warning)'
+                }}
+              />
+            ),
+            title: '上传超时',
+            content: (
+              <div>
+                <div style={{ textAlign: 'center', margin: 'auto' }}>若提示前进度条已在绿色停留，则文件可能在后台处理中，需等待后台返回处理结果，或者联系开发者获取详情。为避免这种情况发生，请尽可能在网络连接良好的情况下上传文件。{res.toString()}</div>
+                <div style={{ textAlign: 'center', margin: 'auto' }}>{res.toString()}</div>)
+              </div>
+            )
+          })
+          console.log(res)
+        }
       })
       .catch((err) => {
         onError(err, file)
@@ -149,7 +167,7 @@ const uploadProps = {
                   出现了预料之外的错误
                 </div>
                 <div style={{ margin: 'auto', position: 'relative' }}>
-                  {`错误信息: ${JSON.stringify(err)}`}
+                  {`错误信息: ${err.toString()}`}
                 </div>
               </div>
             </>
@@ -173,7 +191,7 @@ const uploadProps = {
             />
           ),
           title: '上传中断',
-          content: <div style={{ textAlign: 'center', margin: 'auto' }}>上传意外中断！可能是由于网络环境差，请重试</div>
+          content: <div style={{ textAlign: 'center', margin: 'auto' }}>上传中断，若进度条为绿色，则需等待后台返回处理结果</div>
         })
         console.log('upload progress is aborted.')
       }
