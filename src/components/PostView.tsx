@@ -2,7 +2,7 @@ import { getTimeStr } from '../utils/cast2Str'
 import { Image, ImageViewer } from 'antd-mobile'
 import { CommentOutlined, HeartOutlined, WarningOutlined } from '@ant-design/icons'
 import React, { MouseEventHandler } from 'react'
-import { Post } from '../generated/globalTypes'
+import { Maybe, Post } from '../generated/globalTypes'
 import { CommentView } from './CommentView'
 import { message } from 'antd'
 
@@ -14,13 +14,15 @@ export interface PostViewProps {
 
 export const PostView = ({ node, onVoteClick, onDeleteClick }: PostViewProps) => {
   return (
-    <div className={`mb-3 ${node?.creator?.unionId && node.creator.openId ? 'bg-pink-100' : 'bg-gray-200'} p-3 rounded-lg flex flex-col`}>
+    <div className={`mb-3 ${node.creator?.userId.length === 36 ? 'bg-pink-100' : 'bg-gray-200'} p-3 rounded-lg flex flex-col`}>
 
       <div onClick={() => console.log(node)} className="flex flex-row">
         <div className="flex flex-col mr-3">
           <img className="h-12 w-12 rounded-full" onClick={(e) => {
             e.stopPropagation()
-            message.info(`${node.creator?.unionId ? '微信' : ''}用户 ${node.creator?.id}`)
+            if (node?.creator?.id !== undefined) {
+              message.info(`${(node.creator?.unionId || node.creator?.openId) ? '微信' : ''}用户 ${node.creator?.id}`)
+            }
           }}
           alt="https://dev-1306842204.cos.ap-guangzhou.myqcloud.com/defaultAvatars/anonymous.jpg"
           src={node.creator?.avatarImageUrl ?? 'https://dev-1306842204.cos.ap-guangzhou.myqcloud.com/defaultAvatars/anonymous.jpg'}></img>
@@ -36,7 +38,7 @@ export const PostView = ({ node, onVoteClick, onDeleteClick }: PostViewProps) =>
             {node?.content}
           </div>
 
-          {node?.images?.map((image: string, idx: number) => (
+          {node?.images?.map((image: Maybe<string>, idx: number) => (
             <Image
               className="rounded-md my-1.5"
               src={image + '?imageMogr2/format/webp'}
@@ -44,7 +46,7 @@ export const PostView = ({ node, onVoteClick, onDeleteClick }: PostViewProps) =>
               onClick={(e) => {
                 e.stopPropagation()
                 ImageViewer.Multi.show({
-                  images: node?.images ?? [],
+                  images: node?.images as string[] ?? [],
                   defaultIndex: idx
                 })
               }}

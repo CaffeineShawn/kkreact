@@ -28,7 +28,7 @@ export const FRAGMENT_POST_FIELDS = gql`
     reports {
       totalCount
     }
-    trendingComments(first: 3) {
+    trendingComments(first: 10) {
       nodes {
         id
         content

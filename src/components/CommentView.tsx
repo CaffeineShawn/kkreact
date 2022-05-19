@@ -18,7 +18,9 @@ export const CommentView = ({ node }: CommentViewProps) => {
       <div className="flex flex-row items-center mt-2 pl-2">
         <img className="h-8 w-8 rounded-full my-1 mr-4" onClick={(e) => {
           e.stopPropagation()
-          message.info(`${node.creator?.unionId ? '微信' : ''}用户 ${node.creator?.id}`)
+          if (node?.creator?.id !== undefined) {
+            message.info(`${(node.creator?.unionId || node.creator?.openId) ? '微信' : ''}用户 ${node.creator?.id}`)
+          }
         }} alt="https://dev-1306842204.cos.ap-guangzhou.myqcloud.com/defaultAvatars/anonymous.jpg"
         src={node.creator?.avatarImageUrl ?? 'https://dev-1306842204.cos.ap-guangzhou.myqcloud.com/defaultAvatars/anonymous.jpg'}
         />
