@@ -120,7 +120,7 @@ const uploadProps = {
       })
       .then(res => {
         if (res.data !== undefined) {
-          const { length } = res.data.length
+          const { length } = res.data
           onSuccess(res, file)
           Dialog.confirm({
             title: '上传成功',
