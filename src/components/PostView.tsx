@@ -14,7 +14,7 @@ export interface PostViewProps {
 
 export const PostView = ({ node, onVoteClick, onDeleteClick }: PostViewProps) => {
   return (
-    <div className={`mb-3 ${node.creator?.userId.length === 36 ? 'bg-pink-100' : 'bg-gray-200'} p-3 rounded-lg flex flex-col`}>
+    <div className={`mb-3 ${(node.creator?.unionId || node.creator?.openId) ? 'bg-pink-100' : 'bg-gray-200'} p-3 rounded-lg flex flex-col`}>
 
       <div onClick={() => console.log(node)} className="flex flex-row">
         <div className="flex flex-col mr-3">
