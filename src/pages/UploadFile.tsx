@@ -144,11 +144,10 @@ const uploadProps = {
                 }}
               />
             ),
-            title: '上传超时',
+            title: '上传错误',
             content: (
               <div>
                 <div style={{ textAlign: 'center', margin: 'auto' }}>若提示前进度条已在绿色停留，则文件可能在后台处理中，需等待后台返回处理结果，或者联系开发者获取详情。为避免这种情况发生，请尽可能在网络连接良好的情况下上传文件。{res.toString()}</div>
-                <div style={{ textAlign: 'center', margin: 'auto' }}>{res.toString()}</div>)
               </div>
             )
           })
