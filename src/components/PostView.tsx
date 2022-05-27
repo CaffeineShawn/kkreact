@@ -34,7 +34,7 @@ export const PostView = ({ node, onVoteClick, onDeleteClick }: PostViewProps) =>
               {` · ${getTimeStr(node?.createdAt!)}`}
             </div>
           </div>
-          <div>
+          <div className="break-all">
             {node?.content}
           </div>
 
